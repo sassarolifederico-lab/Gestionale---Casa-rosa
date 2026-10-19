@@ -111,7 +111,7 @@ function loginError(msg) { $('#loginErr').textContent = msg; $('#login').hidden 
 onAuthStateChanged(auth, user => {
   stop();
   if (user) { $('#login').hidden = true; listen(user); }
-  else { const pw = $('#loginForm').password; pw.type = 'password'; $('#pwShow').textContent = 'Mostra'; $('#login').hidden = false; $('#cloudCard').hidden = true; $('#syncDot').hidden = true; }
+  else { const pw = $('#loginForm').password; pw.type = 'password'; $('#pwShow').classList.remove('on'); $('#pwShow').setAttribute('aria-label', 'Mostra la password'); $('#login').hidden = false; $('#cloudCard').hidden = true; $('#syncDot').hidden = true; }
 });
 
 const ERR = {

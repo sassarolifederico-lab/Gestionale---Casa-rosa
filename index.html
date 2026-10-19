@@ -85,7 +85,10 @@ tr:last-child td{border-bottom:0}
 td.muted{color:var(--muted)}
 .empty{color:var(--muted);padding:12px 2px}
 .hint{color:var(--muted);font-size:13px}
-.pwrow{display:flex;gap:8px}.pwrow input{flex:1;min-width:0}
+.pwrow{position:relative;display:block}.pwrow input{width:100%;padding-right:44px}
+.pwrow button{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:none;padding:6px;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.pwrow svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pwrow .eyeoff,.pwrow button.on .eye{display:none}.pwrow button.on .eyeoff{display:block}
 dialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--surface);color:var(--text)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog form{padding:16px}
@@ -406,7 +409,7 @@ textarea{min-height:64px;resize:vertical}
   <form id="loginForm" class="card">
     <div class="loginlogo"><img src="icon.svg" alt=""><b>B&amp;B Casa Rosa</b><span>Accedi per continuare</span></div>
     <label>Email<input type="email" name="email" autocomplete="username" required></label>
-    <label>Password<span class="pwrow"><input type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required><button class="btn" type="button" id="pwShow" aria-label="Mostra la password">Mostra</button></span></label>
+    <label>Password<span class="pwrow"><input type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required><button type="button" id="pwShow" aria-label="Mostra la password"><svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eyeoff" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg></button></span></label>
     <div class="err" id="loginErr"></div>
     <button class="btn primary" type="submit">Entra</button>
     <button class="btn" type="button" id="forgot">Ho dimenticato la password</button>
@@ -546,7 +549,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 });
 try { const t = localStorage.getItem(KEY + '_tab'); if (t) document.querySelector(`nav button[data-tab="${t}"]`)?.click(); } catch (e) {}
 
-$('#pwShow').onclick = () => { const i = $('#loginForm').password, show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#pwShow').textContent = show ? 'Nascondi' : 'Mostra'; };
+$('#pwShow').onclick = () => { const i = $('#loginForm').password, b = $('#pwShow'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.classList.toggle('on', show); b.setAttribute('aria-label', show ? 'Nascondi la password' : 'Mostra la password'); };
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2600); }
 
 // --- render: bookings ---
