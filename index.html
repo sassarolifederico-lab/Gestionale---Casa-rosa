@@ -544,12 +544,16 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   if ($('#search').value) { $('#search').value = ''; renderBookings(); }
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
   document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
-  try { localStorage.setItem(KEY + '_tab', b.dataset.tab); } catch (e) {}
   window.scrollTo(0, 0);
 });
-try { const t = localStorage.getItem(KEY + '_tab'); if (t) document.querySelector(`nav button[data-tab="${t}"]`)?.click(); } catch (e) {}
 
 $('#pwShow').onclick = () => { const i = $('#loginForm').password, b = $('#pwShow'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.classList.toggle('on', show); b.setAttribute('aria-label', show ? 'Nascondi la password' : 'Mostra la password'); };
+// A phone often resumes the app instead of restarting it: coming back after a minute away also lands on Prenotazioni, unless a form is open
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt > 60e3 && !document.querySelector('dialog[open]')) { document.querySelector('nav button[data-tab="pren"]').click(); renderBookings(); }
+});
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2600); }
 
 // --- render: bookings ---
