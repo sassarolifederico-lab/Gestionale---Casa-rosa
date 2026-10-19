@@ -111,7 +111,7 @@ function loginError(msg) { $('#loginErr').textContent = msg; $('#login').hidden 
 onAuthStateChanged(auth, user => {
   stop();
   if (user) { $('#login').hidden = true; listen(user); }
-  else { $('#login').hidden = false; $('#cloudCard').hidden = true; $('#syncDot').hidden = true; }
+  else { const pw = $('#loginForm').password; pw.type = 'password'; $('#pwShow').textContent = 'Mostra'; $('#login').hidden = false; $('#cloudCard').hidden = true; $('#syncDot').hidden = true; }
 });
 
 const ERR = {
