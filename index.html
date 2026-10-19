@@ -85,6 +85,7 @@ tr:last-child td{border-bottom:0}
 td.muted{color:var(--muted)}
 .empty{color:var(--muted);padding:12px 2px}
 .hint{color:var(--muted);font-size:13px}
+.pwrow{display:flex;gap:8px}.pwrow input{flex:1;min-width:0}
 dialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--surface);color:var(--text)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog form{padding:16px}
@@ -199,10 +200,18 @@ textarea{min-height:64px;resize:vertical}
   <section id="pren" class="on">
     <div class="row">
       <button class="btn primary" id="newBk">+ Nuova prenotazione</button>
+      <span class="spacer"></span>
+      <input type="search" id="search" placeholder="Cerca ospite…" style="max-width:220px">
     </div>
-    <h2 id="todayTitle">Arrivi di oggi</h2>
-    <div class="list" id="arrivals"></div>
-    <p class="hint" id="arrivedLine"></p>
+    <div id="todayBox">
+      <h2 id="todayTitle">Arrivi di oggi</h2>
+      <div class="list" id="arrivals"></div>
+      <p class="hint" id="arrivedLine"></p>
+    </div>
+    <div id="searchBox" hidden>
+      <h2 id="searchTitle"></h2>
+      <div class="list" id="searchList"></div>
+    </div>
   </section>
 
   <section id="calendario">
@@ -397,7 +406,7 @@ textarea{min-height:64px;resize:vertical}
   <form id="loginForm" class="card">
     <div class="loginlogo"><img src="icon.svg" alt=""><b>B&amp;B Casa Rosa</b><span>Accedi per continuare</span></div>
     <label>Email<input type="email" name="email" autocomplete="username" required></label>
-    <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+    <label>Password<span class="pwrow"><input type="password" name="password" autocomplete="current-password" required><button class="btn" type="button" id="pwShow" aria-label="Mostra la password">Mostra</button></span></label>
     <div class="err" id="loginErr"></div>
     <button class="btn primary" type="submit">Entra</button>
     <button class="btn" type="button" id="forgot">Ho dimenticato la password</button>
@@ -535,6 +544,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 });
 try { const t = localStorage.getItem(KEY + '_tab'); if (t) document.querySelector(`nav button[data-tab="${t}"]`)?.click(); } catch (e) {}
 
+$('#pwShow').onclick = () => { const i = $('#loginForm').password, show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#pwShow').textContent = show ? 'Nascondi' : 'Mostra'; };
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2600); }
 
 // --- render: bookings ---
@@ -567,7 +577,15 @@ function renderBookings() {
   $('#arrivals').innerHTML = wait.length ? wait.map(arrivalCard).join('')
     : `<div class="empty">${all.length ? 'Tutti gli ospiti di oggi sono arrivati.' : 'Nessun arrivo oggi.'}</div>`;
   $('#arrivedLine').innerHTML = done.length ? 'Check-in fatto: ' + done.map(b => `<a href="#" class="bk" data-id="${b.id}">${esc(b.name)}</a>`).join(', ') : '';
+  // While searching, the guest's bookings (newest first) take the place of today's arrivals
+  const q = $('#search').value.trim().toLowerCase();
+  $('#todayBox').hidden = !!q; $('#searchBox').hidden = !q;
+  if (!q) return;
+  const found = db.bookings.filter(b => (b.name || '').toLowerCase().includes(q) || (b.notes || '').toLowerCase().includes(q)).sort((x, y) => y.checkin.localeCompare(x.checkin));
+  $('#searchTitle').textContent = `Prenotazioni trovate (${found.length})`;
+  $('#searchList').innerHTML = found.length ? found.map(bkCard).join('') : '<div class="empty">Nessuna prenotazione con questo nome.</div>';
 }
+$('#search').oninput = renderBookings;
 document.addEventListener('click', e => { const c = e.target.closest('.bk'); if (c) e.preventDefault(); if (c) openBk(db.bookings.find(b => b.id === c.dataset.id)); });
 
 // --- render: stats ---
