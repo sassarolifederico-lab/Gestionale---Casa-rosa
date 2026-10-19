@@ -278,6 +278,7 @@ textarea{min-height:64px;resize:vertical}
       <div class="row">
         <button class="btn primary" id="expJson">Scarica backup</button>
         <label class="btn" style="flex-direction:row;color:var(--text);font-size:15px">Ripristina backup<input type="file" id="impJson" accept=".json,application/json" hidden></label>
+        <label class="btn" style="flex-direction:row;color:var(--text);font-size:15px">Aggiungi dati da file<input type="file" id="mergeJson" accept=".json,application/json" hidden></label>
       </div>
       <div class="row" style="margin-top:8px">
         <button class="btn" id="expCsvB">Prenotazioni in Excel (CSV)</button>
@@ -923,6 +924,28 @@ $('#impJson').onchange = async e => {
     const d = normalize(JSON.parse(await file.text()));
     if (confirm(`Il backup contiene ${d.bookings.length} prenotazioni e ${d.costs.length} spese. Sostituire i dati attuali?`)) { db = d; save(); render(); toast('Backup ripristinato'); }
   } catch (err) { alert('Il file non sembra un backup valido.'); }
+  e.target.value = '';
+};
+// Adds bookings and expenses from a file without touching what is already here;
+// skips anything already present and bookings that would overlap an existing one in the same room
+$('#mergeJson').onchange = async e => {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const d = JSON.parse(await file.text());
+    const inB = Array.isArray(d.bookings) ? d.bookings : [], inC = Array.isArray(d.costs) ? d.costs : [];
+    const ids = new Set([...db.bookings, ...db.costs].map(x => x.id));
+    const clash = b => db.bookings.some(o => o.room === b.room && d2n(o.checkin) < d2n(b.checkout) && d2n(o.checkout) > d2n(b.checkin));
+    const addB = [], skipped = [];
+    for (const b of inB) { if (ids.has(b.id)) continue; if (clash(b)) { skipped.push(b); continue; } addB.push(b); }
+    const addC = inC.filter(c => !ids.has(c.id));
+    if (!addB.length && !addC.length) { alert('Niente di nuovo da aggiungere: questi dati sono già presenti.'); e.target.value = ''; return; }
+    if (!confirm(`Aggiungere ${addB.length} prenotazioni e ${addC.length} spese ai dati attuali?` + (skipped.length ? `\n${skipped.length} prenotazioni saltate perché la camera è già occupata in quelle date.` : ''))) { e.target.value = ''; return; }
+    addB.forEach(b => { const x = { ...b }; if (!db.guests.some(g => g.id === x.guestId)) delete x.guestId; db.bookings.push(x); });
+    addC.forEach(c => db.costs.push({ ...c }));
+    linkGuests(db);
+    save(); render(); toast(`Aggiunte ${addB.length} prenotazioni e ${addC.length} spese`);
+    if (skipped.length) alert('Prenotazioni saltate (camera già occupata):\n' + skipped.map(b => `${b.name}, camera ${b.room}, ${fd(b.checkin)} → ${fd(b.checkout)}`).join('\n'));
+  } catch (err) { alert('Il file non sembra valido.'); }
   e.target.value = '';
 };
 const csv = rows => '﻿' + rows.map(r => r.map(v => { const s = String(v ?? ''); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(';')).join('\r\n');
