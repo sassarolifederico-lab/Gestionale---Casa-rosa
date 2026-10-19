@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gestionale B&amp;B</title>
+<title>B&amp;B Casa Rosa</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -39,6 +39,8 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-a
 header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px 0}
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;max-width:1100px;margin:0 auto}
 .top h1{font-size:18px;margin:0}
+.brand{display:flex;align-items:center;gap:8px}.brand img{width:28px;height:28px;border-radius:7px}
+.loginlogo{display:grid;justify-items:center;gap:6px;text-align:center;margin-bottom:4px}.loginlogo img{width:72px;height:72px;border-radius:16px}.loginlogo b{font-size:22px}.loginlogo span{color:var(--muted);font-size:14px}
 .period{display:flex;align-items:center;gap:4px}
 .period span{min-width:120px;text-align:center;font-weight:600}
 nav{display:flex;gap:2px;max-width:1100px;margin:8px auto 0;overflow-x:auto}
@@ -112,11 +114,16 @@ textarea{min-height:64px;resize:vertical}
 .mday.today{border-color:var(--accent);border-width:2px}
 .mday .dn{font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:2px}
 .mday .dn small{font-weight:400;color:var(--muted);font-size:10px;white-space:nowrap}
-.mbar{font-size:11px;line-height:1.25;border-radius:4px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:17px;cursor:pointer}
+.mbar{font-size:11px;line-height:1.25;border-radius:4px;border:1px solid transparent;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:17px;cursor:pointer}
 .mbar.r5{background:var(--accent);color:var(--accent-text)}
 .mbar.r6{background:var(--warn);color:var(--surface)}
 .mbar.free{background:none;border:1px dashed var(--border);color:var(--muted);cursor:pointer}
-.mbar.bad{box-shadow:inset 3px 0 0 var(--danger)}
+.mbar.bad.s{box-shadow:inset 3px 0 0 var(--danger)}
+.mbar.r5,.mbar.r6{border-radius:0;margin:0 -6px}
+.mbar.s{border-radius:6px 0 0 6px;margin-left:0;position:relative;z-index:1;overflow:visible}
+.mbar.e{border-radius:0 6px 6px 0;margin-right:0}
+.mbar.s.e{border-radius:6px}
+.mbar .lbl{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 @media (min-width:700px){.mday{min-height:96px}.mbar{font-size:12px}}
 .calsel{font-size:14px;font-weight:600}
 .gname{position:relative}
@@ -170,7 +177,7 @@ textarea{min-height:64px;resize:vertical}
 <body>
 <header>
   <div class="top">
-    <h1>B&amp;B Camere 5 e 6</h1>
+    <h1 class="brand"><img src="icon.svg" alt="">B&amp;B Casa Rosa</h1>
     <div class="period">
       <button class="btn icon" id="prevM" aria-label="Mese precedente">‹</button>
       <span id="periodLbl"></span>
@@ -192,13 +199,10 @@ textarea{min-height:64px;resize:vertical}
   <section id="pren" class="on">
     <div class="row">
       <button class="btn primary" id="newBk">+ Nuova prenotazione</button>
-      <span class="spacer"></span>
-      <input type="search" id="search" placeholder="Cerca ospite…" style="max-width:220px">
     </div>
-    <h2>Prossimi arrivi</h2>
-    <div class="list" id="upcoming"></div>
-    <h2 id="monthListTitle"></h2>
-    <div class="list" id="monthList"></div>
+    <h2 id="todayTitle">Arrivi di oggi</h2>
+    <div class="list" id="arrivals"></div>
+    <p class="hint" id="arrivedLine"></p>
   </section>
 
   <section id="calendario">
@@ -307,6 +311,10 @@ textarea{min-height:64px;resize:vertical}
       <h3 id="bkTitle">Nuova prenotazione</h3>
     </div>
     <div class="grid">
+      <div class="full seg" id="ciSeg">
+        <label><input type="radio" name="checkedIn" value="no" checked>Non ancora arrivato</label>
+        <label><input type="radio" name="checkedIn" value="si">Check-in fatto</label>
+      </div>
       <div class="full gname">
         <label>Nome e cognome ospite<input name="name" required autocomplete="off" placeholder="Scrivi per cercare nell'archivio"></label>
         <div class="gsugg" id="gSugg" hidden></div>
@@ -327,12 +335,7 @@ textarea{min-height:64px;resize:vertical}
       <div class="full" id="roomBox">
         <div class="list" id="roomCards"></div>
       </div>
-      <label class="full">Prezzo intero del soggiorno (€)<input type="number" name="fullPrice" min="0" step="0.01" inputmode="decimal" placeholder="Scrivi il prezzo pieno"></label>
-      <div class="full seg" id="discSeg">
-        <label><input type="radio" name="discount" value="0" checked>Prezzo intero</label>
-        <label><input type="radio" name="discount" value="15">Sconto 15%</label>
-        <label><input type="radio" name="discount" value="20">Sconto 20%</label>
-      </div>
+      <label class="full">Prezzo del soggiorno (€)<input type="number" name="fullPrice" min="0" step="0.01" inputmode="decimal" placeholder="Scrivi il prezzo"></label>
       <div class="full seg">
         <label><input type="radio" name="source" value="booking" checked>Booking.com</label>
         <label><input type="radio" name="source" value="diretta">Diretta</label>
@@ -392,7 +395,7 @@ textarea{min-height:64px;resize:vertical}
 
 <div class="login" id="login" hidden>
   <form id="loginForm" class="card">
-    <h3 style="margin:0">Accedi al gestionale</h3>
+    <div class="loginlogo"><img src="icon.svg" alt=""><b>B&amp;B Casa Rosa</b><span>Accedi per continuare</span></div>
     <label>Email<input type="email" name="email" autocomplete="username" required></label>
     <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
     <div class="err" id="loginErr"></div>
@@ -547,19 +550,25 @@ function bkCard(b) {
     ${b.notes ? `<div class="note">${esc(b.notes)}</div>` : ''}
   </div>`;
 }
-function renderBookings() {
-  const q = $('#search').value.trim().toLowerCase();
-  const match = b => !q || (b.name || '').toLowerCase().includes(q) || (b.notes || '').toLowerCase().includes(q);
-  const t = d2n(today());
-  const up = db.bookings.filter(b => d2n(b.checkout) > t && match(b)).sort((a, b) => a.checkin.localeCompare(b.checkin)).slice(0, 6);
-  $('#upcoming').innerHTML = up.length ? up.map(bkCard).join('') : '<div class="empty">Nessun arrivo in programma.</div>';
-  const a = monthStart(Y, M), z = a + dim(Y, M);
-  const ml = db.bookings.filter(b => d2n(b.checkin) < z && d2n(b.checkout) > a && match(b)).sort((x, y) => x.checkin.localeCompare(y.checkin) || x.room.localeCompare(y.room));
-  $('#monthListTitle').textContent = `Prenotazioni di ${MONTHS[M - 1].toLowerCase()} ${Y} (${ml.length})`;
-  $('#monthList').innerHTML = ml.length ? ml.map(bkCard).join('') : '<div class="empty">Nessuna prenotazione in questo mese.</div>';
+// Today's arrivals still waiting for check-in; a saved check-in removes them from the list
+function arrivalCard(b) {
+  const c = calc(b), g = guestOf(b);
+  const tax = c.tax > 0 && b.taxPaid !== 'si' ? ` · <b>tassa da incassare ${fe(c.tax)}</b>` : '';
+  return `<div class="card bk" data-id="${b.id}">
+    <div class="l1"><span class="tag r${b.room}">${ROOMS[b.room].name}</span><span class="name">${esc(b.name)}</span>${g?.rating === 'cattivo' ? '<span class="tag cattivo">Cattivo cliente</span>' : ''}</div>
+    <div class="l2">${b.guests} osp${b.guests == 1 ? 'ite' : 'iti'} · ${c.n} nott${c.n === 1 ? 'e' : 'i'}, parte il ${fd(b.checkout)}${tax}</div>
+    ${b.notes ? `<div class="note">${esc(b.notes)}</div>` : ''}
+  </div>`;
 }
-$('#search').oninput = renderBookings;
-document.addEventListener('click', e => { const c = e.target.closest('.bk'); if (c) openBk(db.bookings.find(b => b.id === c.dataset.id)); });
+function renderBookings() {
+  const t = today(), all = db.bookings.filter(b => b.checkin === t).sort((x, y) => x.room.localeCompare(y.room));
+  const wait = all.filter(b => !b.checkedIn), done = all.filter(b => b.checkedIn);
+  $('#todayTitle').textContent = `Arrivi di oggi, ${fd(t)}`;
+  $('#arrivals').innerHTML = wait.length ? wait.map(arrivalCard).join('')
+    : `<div class="empty">${all.length ? 'Tutti gli ospiti di oggi sono arrivati.' : 'Nessun arrivo oggi.'}</div>`;
+  $('#arrivedLine').innerHTML = done.length ? 'Check-in fatto: ' + done.map(b => `<a href="#" class="bk" data-id="${b.id}">${esc(b.name)}</a>`).join(', ') : '';
+}
+document.addEventListener('click', e => { const c = e.target.closest('.bk'); if (c) e.preventDefault(); if (c) openBk(db.bookings.find(b => b.id === c.dataset.id)); });
 
 // --- render: stats ---
 function tableHTML(head, rows, totIdx = -1) {
@@ -667,7 +676,7 @@ document.addEventListener('click', e => {
 
 // --- booking dialog ---
 const dlg = $('#dlgBk'), F = $('#bkForm');
-let editing = null, discTouched = false;
+let editing = null;
 function openBk(b, arrival) {
   editing = b || null;
   $('#bkTitle').textContent = b ? 'Modifica prenotazione' : 'Nuova prenotazione';
@@ -676,12 +685,13 @@ function openBk(b, arrival) {
   const t = today();
   const v = b || { room: '5', name: '', checkin: arrival || '', checkout: arrival ? n2d(d2n(arrival) + 1) : '', guests: 2, price: '', source: 'booking', exempt: 0, exemptReason: '', taxPaid: 'no', notes: '' };
   F.room.value = v.room; F.name.value = v.name; F.checkin.value = v.checkin; F.checkout.value = v.checkout;
-  F.guests.value = v.guests; F.fullPrice.value = v.fullPrice ?? v.price; F.discount.value = String(v.discount ?? (v.source === 'diretta' ? 15 : 0)); F.source.value = v.source; F.exempt.value = v.exempt || 0;
+  F.guests.value = v.guests; F.fullPrice.value = v.price; F.source.value = v.source; F.exempt.value = v.exempt || 0;
   F.exemptReason.value = v.exemptReason || ''; F.taxPaid.value = v.taxPaid || 'no'; F.notes.value = v.notes || '';
+  F.checkedIn.value = v.checkedIn ? 'si' : 'no'; $('#ciSeg').style.display = b ? '' : 'none';
   const g0 = b && guestOf(b);
   F.guestId.value = g0?.id || ''; F.phone.value = g0?.phone || ''; F.email.value = g0?.email || '';
   $('#gSugg').hidden = true; guestBanner();
-  discTouched = !!b; syncCap(); datesChanged(!!b); preview();
+  syncCap(); datesChanged(!!b); preview();
   dlg.showModal();
 }
 function formData() {
@@ -689,14 +699,14 @@ function formData() {
     room: F.room.value, name: F.name.value.trim(), checkin: F.checkin.value, checkout: F.checkout.value,
     guests: parseInt(F.guests.value, 10) || 0, ...priceOf(),
     source: F.source.value, exempt: parseInt(F.exempt.value, 10) || 0, exemptReason: F.exemptReason.value.trim(),
-    taxPaid: F.taxPaid.value, notes: F.notes.value.trim(),
+    taxPaid: F.taxPaid.value, notes: F.notes.value.trim(), checkedIn: F.checkedIn.value === 'si',
     commPct: editing?.commPct ?? db.settings.commission, taxRate: editing?.taxRate ?? db.settings.taxRate,
   };
 }
-// Full price typed by hand, final price after the chosen discount
+// Price typed by hand for each stay
 function priceOf() {
-  const fullPrice = Math.round((parseFloat(F.fullPrice.value) || 0) * 100) / 100, discount = +F.discount.value || 0;
-  return { fullPrice, discount, price: Math.round(fullPrice * (100 - discount)) / 100 };
+  const price = Math.round((parseFloat(F.fullPrice.value) || 0) * 100) / 100;
+  return { fullPrice: price, discount: 0, price };
 }
 function syncCap() { F.exempt.max = F.guests.value || 1; }
 
@@ -780,16 +790,11 @@ function preview(e) {
   const d = formData();
   if (!d.checkin || !d.checkout || d2n(d.checkout) <= d2n(d.checkin)) { $('#bkPreview').textContent = 'Scegli le date per vedere il calcolo.'; return; }
   const c = calc(d);
-  $('#bkPreview').innerHTML = (d.discount ? `Prezzo intero ${fe(d.fullPrice)} − sconto ${d.discount}% = <b>prezzo ${fe(d.price)}</b><br>` : `<b>Prezzo ${fe(d.price)}</b><br>`) +
+  $('#bkPreview').innerHTML = `<b>Prezzo ${fe(d.price)}</b><br>` +
     `${c.n} nott${c.n === 1 ? 'e' : 'i'} · ${fe(c.gross / c.n)} a notte<br>` +
     (d.source === 'booking' ? `Commissione Booking ${d.commPct}%: −${fe(c.comm)} → <b>netto ${fe(c.net)}</b><br>` : `<b>Netto ${fe(c.net)}</b> (nessuna commissione)<br>`) +
     `Tassa di soggiorno: ${c.taxable} × ${c.taxNights} notti × ${fe(c.rate)} = <b>${fe(c.tax)}</b>`;
 }
-// Direct bookings start at -15%, Booking.com at full price, until the discount is chosen by hand
-F.addEventListener('change', e => {
-  if (e.target.name === 'discount') discTouched = true;
-  if (e.target.name === 'source' && !discTouched) F.discount.value = F.source.value === 'diretta' ? '15' : '0';
-});
 F.addEventListener('input', preview);
 F.addEventListener('change', preview);
 F.addEventListener('submit', e => {
@@ -1018,9 +1023,12 @@ function renderMonthCal() {
     const bars = ROOM_IDS.map(r => {
       const b = db.bookings.find(b => b.room === r && d2n(b.checkin) <= d && d2n(b.checkout) > d);
       if (!b) { free++; return `<div class="mbar free" title="Camera ${r} libera">${r}</div>`; }
-      // Name on the first night and at the start of each week; the bar alone on the other days
-      const label = d2n(b.checkin) === d || monday || d === first ? esc(b.name) : '&nbsp;';
-      return `<div class="mbar r${r}${guestOf(b)?.rating === 'cattivo' ? ' bad' : ''}" data-open="${b.id}" title="${esc(b.name)} · ${b.guests} ospiti · ${fd(b.checkin)} → ${fd(b.checkout)}">${label}</div>`;
+      // A stay is one bar across its nights, broken only at the week and month edges; the name spans the visible piece
+      const start = d2n(b.checkin) === d || monday || d === first;
+      const segEnd = Math.min(d2n(b.checkout), first + n, d + 7 - (new Date(d * 864e5).getUTCDay() + 6) % 7);
+      const end = d + 1 === segEnd, len = segEnd - d;
+      const label = start ? `<span class="lbl" style="width:calc(${len * 100}% + ${len * 11 - 11}px)">${esc(b.name)}</span>` : '&nbsp;';
+      return `<div class="mbar r${r}${start ? ' s' : ''}${end ? ' e' : ''}${guestOf(b)?.rating === 'cattivo' ? ' bad' : ''}" data-open="${b.id}" title="${esc(b.name)} · ${b.guests} ospiti · ${fd(b.checkin)} → ${fd(b.checkout)}">${label}</div>`;
     }).join('');
     const out = db.bookings.filter(b => d2n(b.checkout) === d).length, inn = db.bookings.filter(b => d2n(b.checkin) === d).length;
     const flow = [inn ? `↓${inn}` : '', out ? `↑${out}` : ''].filter(Boolean).join(' ');
