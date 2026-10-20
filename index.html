@@ -91,6 +91,10 @@ td.muted{color:var(--muted)}
 .hero{display:flex;align-items:center;gap:20px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,var(--rose-soft),var(--surface));border:1px solid var(--rose-line)}
 .hero img{width:130px;height:130px;flex:none}
 #todayBox h2,#searchBox h2{margin-top:20px}
+/* Logo as a faint watermark behind the Prenotazioni page */
+#pren{position:relative;isolation:isolate}
+#pren::before{content:"";position:fixed;left:50%;top:58%;width:min(78vw,460px);aspect-ratio:1;transform:translate(-50%,-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
+@media (prefers-color-scheme:dark){#pren::before{opacity:.07}}
 .hello{display:grid;gap:3px}.hello b{font-size:24px;font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--rose)}
 .hello span{color:var(--muted);font-size:15px}.hello #todayLong{color:var(--text);text-transform:capitalize}
 @media (max-width:420px){.hero{gap:14px;padding:14px}.hero img{width:104px;height:104px}.hello b{font-size:21px}}
@@ -211,7 +215,6 @@ textarea{min-height:64px;resize:vertical}
 <main>
   <section id="pren" class="on">
     <div class="hero">
-      <img src="logo.png" alt="La Casa Rosa di via Pisacane">
       <div class="hello"><b id="hello"></b><span id="todayLong"></span><span id="todaySum"></span></div>
     </div>
     <div class="row">
