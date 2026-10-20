@@ -91,9 +91,9 @@ td.muted{color:var(--muted)}
 .hero{display:flex;align-items:center;gap:20px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,var(--rose-soft),var(--surface));border:1px solid var(--rose-line)}
 .hero img{width:130px;height:130px;flex:none}
 #todayBox h2,#searchBox h2{margin-top:20px}
-/* Logo as a faint watermark behind the Prenotazioni page */
+/* Logo as a faint watermark behind the Prenotazioni page, kept in the lower part of the screen so it clears the greeting box */
 #pren{position:relative;isolation:isolate}
-#pren::before{content:"";position:fixed;left:50%;top:58%;width:min(78vw,460px);aspect-ratio:1;transform:translate(-50%,-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
+#pren::before{content:"";position:fixed;left:50%;bottom:4vh;width:min(78vw,460px,46vh);aspect-ratio:1;transform:translateX(-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
 @media (prefers-color-scheme:dark){#pren::before{opacity:.07}}
 .hello{display:grid;gap:3px}.hello b{font-size:24px;font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--rose)}
 .hello span{color:var(--muted);font-size:15px}.hello #todayLong{color:var(--text);text-transform:capitalize}

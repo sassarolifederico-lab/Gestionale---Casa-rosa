@@ -1,4 +1,4 @@
-const CACHE = 'gestionale-bb-v15';
+const CACHE = 'gestionale-bb-v16';
 const FILES = ['./', './index.html', './manifest.webmanifest', './logo.png', './logo-small.png', './favicon-32.png', './icon-maskable-512.png', './icon-192.png', './icon-512.png', './icon-180.png', './firebase-config.js', './cloud.js'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))));
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))));
