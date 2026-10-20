@@ -686,7 +686,7 @@ function renderCosts() {
   const cm = costsIn(a, z), cy = costsIn(ya, z);
   const base = costCats();
   const cats = [...base, ...Object.keys(cy.byCat).filter(c => !base.includes(c))];
-  const rows = cats.map(c => [c, cm.byCat[c] ? fe(cm.byCat[c]) : '<span class="hint">–</span>', cy.byCat[c] ? fe(cy.byCat[c]) : '<span class="hint">–</span>']);
+  const rows = cats.map(c => [esc(c), cm.byCat[c] ? fe(cm.byCat[c]) : '<span class="hint">–</span>', cy.byCat[c] ? fe(cy.byCat[c]) : '<span class="hint">–</span>']);
   rows.push(['Totale', fe(cm.tot), fe(cy.tot)]);
   $('#tCostCat').innerHTML = tableHTML(['Voce', MONTHS[M - 1] + ' ' + Y, 'Da inizio anno'], rows, rows.length - 1);
   const groups = new Map();
