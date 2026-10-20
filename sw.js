@@ -1,5 +1,5 @@
-const CACHE = 'gestionale-bb-v12';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './firebase-config.js', './cloud.js'];
+const CACHE = 'gestionale-bb-v13';
+const FILES = ['./', './index.html', './manifest.webmanifest', './logo.png', './logo-small.png', './favicon-32.png', './icon-maskable-512.png', './icon-192.png', './icon-512.png', './icon-180.png', './firebase-config.js', './cloud.js'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))));
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))));
 // Only the app's own files: always ask the server for the latest version, fall back to the saved copy offline.

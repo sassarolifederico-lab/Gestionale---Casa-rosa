@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>B&amp;B Casa Rosa</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#2f6f5e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,6 +13,7 @@
 :root{
   --bg:#f6f5f1; --surface:#ffffff; --surface2:#efede7; --text:#1f2421; --muted:#636b66;
   --border:#dcd9d0; --accent:#2f6f5e; --accent-text:#ffffff; --accent-soft:#e1efe9;
+  --rose:#b48f90; --rose-soft:#f7ecea; --rose-line:#ead8d6;
   --warn:#9a5b00; --warn-soft:#fbefd9; --danger:#b42318; --danger-soft:#fde8e6;
   --booking:#2457a6; --booking-soft:#e3ecfa; --direct:#7a4bb0; --direct-soft:#efe6fa;
   --shadow:0 1px 2px rgba(0,0,0,.06);
@@ -21,6 +22,7 @@
   :root:not([data-theme="light"]){
     --bg:#151816; --surface:#1e2220; --surface2:#262b28; --text:#e8ebe9; --muted:#a2aba6;
     --border:#343a37; --accent:#5fb79c; --accent-text:#0d1512; --accent-soft:#1f3a31;
+    --rose:#c9a3a4; --rose-soft:#2a2324; --rose-line:#3d3132;
     --warn:#f0b65a; --warn-soft:#3a2d17; --danger:#f2867c; --danger-soft:#3d1f1c;
     --booking:#8fb4ee; --booking-soft:#1d2b42; --direct:#c4a3ec; --direct-soft:#2f2440;
     --shadow:none;
@@ -29,6 +31,7 @@
 :root[data-theme="dark"]{
   --bg:#151816; --surface:#1e2220; --surface2:#262b28; --text:#e8ebe9; --muted:#a2aba6;
   --border:#343a37; --accent:#5fb79c; --accent-text:#0d1512; --accent-soft:#1f3a31;
+    --rose:#c9a3a4; --rose-soft:#2a2324; --rose-line:#3d3132;
   --warn:#f0b65a; --warn-soft:#3a2d17; --danger:#f2867c; --danger-soft:#3d1f1c;
   --booking:#8fb4ee; --booking-soft:#1d2b42; --direct:#c4a3ec; --direct-soft:#2f2440;
   --shadow:none;
@@ -39,8 +42,8 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-a
 header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px 0}
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;max-width:1100px;margin:0 auto}
 .top h1{font-size:18px;margin:0}
-.brand{display:flex;align-items:center;gap:8px}.brand img{width:28px;height:28px;border-radius:7px}
-.loginlogo{display:grid;justify-items:center;gap:6px;text-align:center;margin-bottom:4px}.loginlogo img{width:72px;height:72px;border-radius:16px}.loginlogo b{font-size:22px}.loginlogo span{color:var(--muted);font-size:14px}
+.brand{display:flex;align-items:center;gap:8px}.brand img{width:30px;height:30px}
+.loginlogo{display:grid;justify-items:center;gap:6px;text-align:center;margin-bottom:4px}.loginlogo img{width:150px;height:150px}.loginlogo span{color:var(--muted);font-size:14px}
 .period{display:flex;align-items:center;gap:4px}
 .period span{min-width:120px;text-align:center;font-weight:600}
 nav{display:flex;gap:2px;max-width:1100px;margin:8px auto 0;overflow-x:auto}
@@ -85,6 +88,12 @@ tr:last-child td{border-bottom:0}
 td.muted{color:var(--muted)}
 .empty{color:var(--muted);padding:12px 2px}
 .hint{color:var(--muted);font-size:13px}
+.hero{display:flex;align-items:center;gap:20px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,var(--rose-soft),var(--surface));border:1px solid var(--rose-line)}
+.hero img{width:130px;height:130px;flex:none}
+#todayBox h2,#searchBox h2{margin-top:20px}
+.hello{display:grid;gap:3px}.hello b{font-size:24px;font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--rose)}
+.hello span{color:var(--muted);font-size:15px}.hello #todayLong{color:var(--text);text-transform:capitalize}
+@media (max-width:420px){.hero{gap:14px;padding:14px}.hero img{width:104px;height:104px}.hello b{font-size:21px}}
 .pwrow{position:relative;display:block}.pwrow input{width:100%;padding-right:44px}
 .pwrow button{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:none;padding:6px;cursor:pointer;color:var(--muted);display:grid;place-items:center}
 .pwrow svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -181,7 +190,7 @@ textarea{min-height:64px;resize:vertical}
 <body>
 <header>
   <div class="top">
-    <h1 class="brand"><img src="icon.svg" alt="">B&amp;B Casa Rosa</h1>
+    <h1 class="brand"><img src="logo-small.png" alt="">B&amp;B Casa Rosa</h1>
     <div class="period">
       <button class="btn icon" id="prevM" aria-label="Mese precedente">‹</button>
       <span id="periodLbl"></span>
@@ -201,6 +210,10 @@ textarea{min-height:64px;resize:vertical}
 
 <main>
   <section id="pren" class="on">
+    <div class="hero">
+      <img src="logo.png" alt="La Casa Rosa di via Pisacane">
+      <div class="hello"><b id="hello"></b><span id="todayLong"></span><span id="todaySum"></span></div>
+    </div>
     <div class="row">
       <button class="btn primary" id="newBk">+ Nuova prenotazione</button>
       <span class="spacer"></span>
@@ -407,7 +420,7 @@ textarea{min-height:64px;resize:vertical}
 
 <div class="login" id="login" hidden>
   <form id="loginForm" class="card">
-    <div class="loginlogo"><img src="icon.svg" alt=""><b>B&amp;B Casa Rosa</b><span>Accedi per continuare</span></div>
+    <div class="loginlogo"><img src="logo.png" alt="La Casa Rosa di via Pisacane"><span>Accedi per continuare</span></div>
     <label>Email<input type="email" name="email" autocomplete="username" required></label>
     <label>Password<span class="pwrow"><input type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required><button type="button" id="pwShow" aria-label="Mostra la password"><svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eyeoff" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg></button></span></label>
     <div class="err" id="loginErr"></div>
@@ -579,7 +592,16 @@ function arrivalCard(b) {
     ${b.notes ? `<div class="note">${esc(b.notes)}</div>` : ''}
   </div>`;
 }
+function renderHero() {
+  const t = today(), h = new Date().getHours();
+  $('#hello').textContent = h < 13 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  $('#todayLong').textContent = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+  const inn = db.bookings.filter(b => b.checkin === t).length, out = db.bookings.filter(b => b.checkout === t).length;
+  const busy = new Set(db.bookings.filter(b => d2n(b.checkin) <= d2n(t) && d2n(b.checkout) > d2n(t)).map(b => b.room)).size;
+  $('#todaySum').textContent = `${inn} arriv${inn === 1 ? 'o' : 'i'} · ${out} partenz${out === 1 ? 'a' : 'e'} · ${busy} di ${ROOM_IDS.length} camere occupate stanotte`;
+}
 function renderBookings() {
+  renderHero();
   // While searching, the guest's bookings (newest first) take the place of today's arrivals
   const q = normName($('#search').value);
   $('#todayBox').hidden = !!q; $('#searchBox').hidden = !q;
