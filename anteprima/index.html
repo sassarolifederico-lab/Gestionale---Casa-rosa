@@ -128,11 +128,11 @@ td.muted{color:var(--muted)}
 .hero img{width:130px;height:130px;flex:none}
 #todayBox h2,#searchBox h2{margin-top:20px}
 /* Logo as a faint watermark in the middle of the screen behind the Prenotazioni page; the boxes on top are see-through so it shows beneath them */
-#pren{position:relative;isolation:isolate}
-#pren::before{content:"";position:fixed;left:50%;top:50%;width:min(80vw,480px,60vh);aspect-ratio:1;transform:translate(-50%,-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
-@media (prefers-color-scheme:dark){#pren::before{opacity:.07}}
+main{position:relative;isolation:isolate}
+main::before{content:"";position:fixed;left:50%;top:50%;width:min(80vw,480px,60vh);aspect-ratio:1;transform:translate(-50%,-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
+@media (prefers-color-scheme:dark){main::before{opacity:.07}}
 #pren .hero{background:linear-gradient(135deg,color-mix(in srgb,var(--rose-soft) 70%,transparent),color-mix(in srgb,var(--surface) 55%,transparent))}
-#pren .card,#pren input[type=search]{background:color-mix(in srgb,var(--surface) 62%,transparent)}
+main .card,main .statsec,main .tw,main .mday,main #guestList,main .roomcard,main input[type=search]{background:color-mix(in srgb,var(--surface) 62%,transparent)}
 .hello{display:grid;gap:3px}.hello b{font-size:24px;font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--rose)}
 .hello span{color:var(--muted);font-size:15px}.hello #todayLong{color:var(--text);text-transform:capitalize}
 @media (max-width:420px){.hero{gap:14px;padding:14px}.hero img{width:104px;height:104px}.hello b{font-size:21px}}
