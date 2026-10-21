@@ -103,7 +103,6 @@ function listen(user) {
   unsubs.push(onSnapshot(metaRef, opts, s => { snaps.meta = s; apply(); }, onErr));
   $('#cloudCard').hidden = false;
   $('#cloudInfo').textContent = `Collegato come ${user.email}. Le modifiche fatte qui compaiono da sole sugli altri telefoni e computer collegati con un account autorizzato, e funzionano anche senza internet: vengono inviate appena torna la connessione.`;
-  $('#demo').hidden = true;
 }
 
 function loginError(msg) { $('#loginErr').textContent = msg; $('#login').hidden = false; }

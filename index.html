@@ -7,35 +7,21 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="icon-180.png">
-<meta name="theme-color" content="#2f6f5e">
+<meta name="theme-color" content="#8a5a5d">
+<meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{
   --bg:#f6f5f1; --surface:#ffffff; --surface2:#efede7; --text:#1f2421; --muted:#636b66;
-  --border:#dcd9d0; --accent:#2f6f5e; --accent-text:#ffffff; --accent-soft:#e1efe9;
-  --rose:#b48f90; --rose-soft:#f7ecea; --rose-line:#ead8d6;
+  --border:#dcd9d0; --accent:#8a5a5d; --accent-text:#ffffff; --accent-soft:#f4e7e6;
+  --ok:#2f6f5e; --ok-soft:#e1efe9; --c5:#8a5a5d; --c5-soft:#f4e7e6; --c6:#55765d; --c6-soft:#e4eee6; --c6-text:#ffffff;
+  --rose:#8a5a5d; --rose-soft:#f7ecea; --rose-line:#ead8d6;
   --warn:#9a5b00; --warn-soft:#fbefd9; --danger:#b42318; --danger-soft:#fde8e6;
   --booking:#2457a6; --booking-soft:#e3ecfa; --direct:#7a4bb0; --direct-soft:#efe6fa;
   --shadow:0 1px 2px rgba(0,0,0,.06);
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#151816; --surface:#1e2220; --surface2:#262b28; --text:#e8ebe9; --muted:#a2aba6;
-    --border:#343a37; --accent:#5fb79c; --accent-text:#0d1512; --accent-soft:#1f3a31;
-    --rose:#c9a3a4; --rose-soft:#2a2324; --rose-line:#3d3132;
-    --warn:#f0b65a; --warn-soft:#3a2d17; --danger:#f2867c; --danger-soft:#3d1f1c;
-    --booking:#8fb4ee; --booking-soft:#1d2b42; --direct:#c4a3ec; --direct-soft:#2f2440;
-    --shadow:none;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#151816; --surface:#1e2220; --surface2:#262b28; --text:#e8ebe9; --muted:#a2aba6;
-  --border:#343a37; --accent:#5fb79c; --accent-text:#0d1512; --accent-soft:#1f3a31;
-    --rose:#c9a3a4; --rose-soft:#2a2324; --rose-line:#3d3132;
-  --warn:#f0b65a; --warn-soft:#3a2d17; --danger:#f2867c; --danger-soft:#3d1f1c;
-  --booking:#8fb4ee; --booking-soft:#1d2b42; --direct:#c4a3ec; --direct-soft:#2f2440;
-  --shadow:none;
-}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -49,6 +35,28 @@ header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1
 nav{display:flex;gap:2px;max-width:1100px;margin:8px auto 0;overflow-x:auto}
 nav button{flex:1;border:0;background:none;color:var(--muted);padding:10px 8px;font:inherit;font-size:15px;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
 nav button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+nav svg{display:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav .more{display:none}
+.moremenu{position:fixed;right:10px;bottom:calc(66px + env(safe-area-inset-bottom));z-index:30;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);overflow:hidden;min-width:190px}
+.moremenu[hidden]{display:none}
+.moremenu button{display:block;width:100%;text-align:left;font:inherit;color:var(--text);background:none;border:0;border-bottom:1px solid var(--border);padding:14px 16px;cursor:pointer}
+.moremenu button:last-child{border-bottom:0}
+body:not([data-tab=calendario]):not([data-tab=stat]):not([data-tab=costi]) .period{display:none}
+@media (max-width:699px){
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;gap:0;overflow:visible;background:var(--surface);border-top:1px solid var(--border);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;padding:6px 2px;border-bottom:0;border-radius:10px;min-height:52px}
+  nav button.on{background:var(--accent-soft);border-bottom:0}
+  nav svg{display:block}
+  nav .extra{display:none}
+  nav .more{display:flex}
+  header{padding-bottom:10px}
+  main{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .grow .cnt{display:none}
+  .statsec{padding:0 10px}
+  .statsec th,.statsec td{padding:7px 6px}
+  body:is([data-tab=calendario],[data-tab=stat],[data-tab=costi]) .brand span{display:none}
+  .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+}
 main{max-width:1100px;margin:0 auto;padding:16px}
 section{display:none}
 section.on{display:block}
@@ -57,7 +65,7 @@ h2:first-child{margin-top:0}
 .btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:9px 14px;font:inherit;font-size:15px;cursor:pointer}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text);font-weight:600}
 .btn.danger{color:var(--danger);border-color:var(--danger)}
-.btn.icon{padding:6px 12px;font-size:18px;line-height:1}
+.btn.icon{padding:6px 12px;font-size:18px;line-height:1;min-width:44px;min-height:44px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .spacer{flex:1}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
@@ -68,16 +76,26 @@ h2:first-child{margin-top:0}
 .bk .l2,.bk .l3{color:var(--muted);font-size:14px;margin-top:2px}
 .bk .note{font-size:14px;margin-top:4px;white-space:pre-wrap}
 .tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface2);color:var(--muted)}
-.tag.r5{background:var(--accent-soft);color:var(--accent)}
-.tag.r6{background:var(--warn-soft);color:var(--warn)}
+.tag.r5{background:var(--c5-soft);color:var(--c5)}
+.tag.r6{background:var(--c6-soft);color:var(--c6)}
 .tag.booking{background:var(--booking-soft);color:var(--booking)}
 .tag.diretta{background:var(--direct-soft);color:var(--direct)}
-.tag.ok{background:var(--accent-soft);color:var(--accent)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
 .tag.due{background:var(--danger-soft);color:var(--danger)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .kpi .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
-.kpi .k{font-size:13px;color:var(--muted)}
-.kpi .s{font-size:13px;color:var(--muted)}
+.kpi .k{font-size:14px;color:var(--muted)}
+.kpi .s{font-size:14px;color:var(--muted)}
+#kpis{grid-template-columns:repeat(2,1fr)}
+@media (min-width:700px){#kpis{grid-template-columns:repeat(4,1fr)}}
+.statsec{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0 14px}
+.statsec summary{cursor:pointer;list-style:none;padding:14px 0;font-weight:600;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.statsec summary::-webkit-details-marker{display:none}
+.statsec summary::after{content:'+';font-size:20px;color:var(--accent);font-weight:700}
+.statsec[open] summary::after{content:'−'}
+.statsec[open]{padding-bottom:14px}
+.statsec h3{font-size:14px;color:var(--muted);font-weight:600;margin:4px 0 6px}
+.statsec h3 + .tw{margin-bottom:12px}
 .tw{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
 th,td{padding:7px 10px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
@@ -91,10 +109,11 @@ td.muted{color:var(--muted)}
 .hero{display:flex;align-items:center;gap:20px;padding:18px 20px;margin-bottom:16px;border-radius:18px;background:linear-gradient(135deg,var(--rose-soft),var(--surface));border:1px solid var(--rose-line)}
 .hero img{width:130px;height:130px;flex:none}
 #todayBox h2,#searchBox h2{margin-top:20px}
-/* Logo as a faint watermark behind the Prenotazioni page, kept in the lower part of the screen so it clears the greeting box */
-#pren{position:relative;isolation:isolate}
-#pren::before{content:"";position:fixed;left:50%;bottom:4vh;width:min(78vw,460px,46vh);aspect-ratio:1;transform:translateX(-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
-@media (prefers-color-scheme:dark){#pren::before{opacity:.07}}
+/* Logo as a faint watermark in the middle of the screen behind the Prenotazioni page; the boxes on top are see-through so it shows beneath them */
+main{position:relative;isolation:isolate}
+main::before{content:"";position:fixed;left:50%;top:50%;width:min(80vw,480px,60vh);aspect-ratio:1;transform:translate(-50%,-50%);background:url(logo.png) center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1}
+#pren .hero{background:linear-gradient(135deg,color-mix(in srgb,var(--rose-soft) 70%,transparent),color-mix(in srgb,var(--surface) 55%,transparent))}
+main .card,main .statsec,main .tw,main .mday,main #guestList,main .roomcard,main input[type=search]{background:color-mix(in srgb,var(--surface) 62%,transparent)}
 .hello{display:grid;gap:3px}.hello b{font-size:24px;font-family:Georgia,"Times New Roman",serif;font-weight:400;color:var(--rose)}
 .hello span{color:var(--muted);font-size:15px}.hello #todayLong{color:var(--text);text-transform:capitalize}
 @media (max-width:420px){.hero{gap:14px;padding:14px}.hero img{width:104px;height:104px}.hello b{font-size:21px}}
@@ -107,8 +126,8 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog form{padding:16px}
 dialog h3{margin:0;font-size:18px}
 .dlghead{position:sticky;top:-16px;z-index:2;display:flex;align-items:center;gap:10px;background:var(--surface);margin:-16px -16px 12px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.xclose{font-size:16px;padding:6px 10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xclose{font-size:16px;padding:6px 10px;min-width:44px;min-height:44px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .grid .full{grid-column:1/-1}
 label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 input,select,textarea{font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 10px;width:100%}
@@ -117,6 +136,13 @@ textarea{min-height:64px;resize:vertical}
 .seg label{flex:1;flex-direction:row;justify-content:center;align-items:center;padding:9px 6px;cursor:pointer;color:var(--text);font-size:15px;gap:0}
 .seg input{position:absolute;opacity:0;width:0;height:0}
 .seg label:has(input:checked){background:var(--accent);color:var(--accent-text);font-weight:600}
+.more-details{border:1px solid var(--border);border-radius:10px;padding:0 12px}
+.more-details summary{cursor:pointer;padding:12px 0;font-size:15px;color:var(--text);font-weight:600;list-style:none}
+.more-details summary::-webkit-details-marker{display:none}
+.more-details summary::before{content:'+';display:inline-block;width:20px;font-weight:700;color:var(--accent)}
+.more-details[open] summary::before{content:'−'}
+.more-details summary .hint{font-weight:400;margin-left:4px}
+.more-details[open]{padding-bottom:12px}
 .preview{background:var(--surface2);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px;font-variant-numeric:tabular-nums}
 .err{color:var(--danger);font-size:14px;margin-top:10px;min-height:1em}
 .actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
@@ -132,8 +158,8 @@ textarea{min-height:64px;resize:vertical}
 .mday .dn{font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:2px}
 .mday .dn small{font-weight:400;color:var(--muted);font-size:10px;white-space:nowrap}
 .mbar{font-size:11px;line-height:1.25;border-radius:4px;border:1px solid transparent;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:17px;cursor:pointer}
-.mbar.r5{background:var(--accent);color:var(--accent-text)}
-.mbar.r6{background:var(--warn);color:var(--surface)}
+.mbar.r5{background:var(--c5);color:var(--accent-text)}
+.mbar.r6{background:var(--c6);color:var(--c6-text)}
 .mbar.free{background:none;border:1px dashed var(--border);color:var(--muted);cursor:pointer}
 .mbar.bad.s{box-shadow:inset 3px 0 0 var(--danger)}
 .mbar.r5,.mbar.r6{border-radius:0;margin:0 -6px}
@@ -149,18 +175,28 @@ textarea{min-height:64px;resize:vertical}
 .gsugg button:last-child{border-bottom:0}
 .gsugg small{color:var(--muted)}
 .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--border)}
-.dot.buono{background:var(--accent)} .dot.cattivo{background:var(--danger)}
+.dot.buono{background:var(--ok)} .dot.cattivo{background:var(--danger)}
 .gbanner{border-radius:10px;padding:10px 12px;font-size:14px;background:var(--surface2);border-left:4px solid var(--border)}
-.gbanner.buono{background:var(--accent-soft);border-left-color:var(--accent)}
+.gbanner.buono{background:var(--ok-soft);border-left-color:var(--ok)}
 .gbanner.cattivo{background:var(--danger-soft);border-left-color:var(--danger);color:var(--danger)}
 .gbanner b{display:block;margin-bottom:2px}
 .gcard{cursor:pointer;border-left:5px solid var(--border)}
-.gcard.buono{border-left-color:var(--accent)}
+#guestList{gap:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+#guestList .empty{padding:12px 14px}
+.grow{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;min-height:48px}
+.grow:last-child{border-bottom:0}
+.grow .gn{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grow .gn small{color:var(--muted);font-weight:400}
+.grow .gmeta{display:flex;gap:10px;align-items:baseline;color:var(--muted);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.grow .gmeta b{color:var(--text);font-weight:600;font-size:14px;min-width:70px;text-align:right}
+.grow.cattivo{background:var(--danger-soft)}
+.grow.cattivo .gn{color:var(--danger)}
+.gcard.buono{border-left-color:var(--ok)}
 .gcard.cattivo{border-left-color:var(--danger);background:var(--danger-soft)}
 .gcard .gn{font-weight:600}
-.tag.buono{background:var(--accent-soft);color:var(--accent)}
+.tag.buono{background:var(--ok-soft);color:var(--ok)}
 .tag.cattivo{background:var(--danger);color:#fff}
-.rating .r-buono:has(input:checked){background:var(--accent);color:var(--accent-text)}
+.rating .r-buono:has(input:checked){background:var(--ok);color:#fff}
 .rating .r-neutro:has(input:checked){background:var(--muted);color:var(--surface)}
 .rating .r-cattivo:has(input:checked){background:var(--danger);color:#fff}
 .buyrows{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
@@ -176,14 +212,13 @@ textarea{min-height:64px;resize:vertical}
 .roomcard:disabled{cursor:default;opacity:.55}
 .seg label:has(input:disabled){opacity:.4;text-decoration:line-through;cursor:default}
 .sync{font-size:12px;padding:3px 9px;border-radius:99px;background:var(--surface2);color:var(--muted);white-space:nowrap}
-.sync.ok{background:var(--accent-soft);color:var(--accent)}
+.sync.ok{background:var(--ok-soft);color:var(--ok)}
 .sync.wait{background:var(--warn-soft);color:var(--warn)}
 .login{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
 .login[hidden]{display:none}
 .login form{width:min(380px,100%);display:grid;gap:12px}
 .costform{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end}
 @media (max-width:640px){
-  .grid{grid-template-columns:1fr 1fr}
   .costform{grid-template-columns:1fr 1fr}
   .costform .btn{grid-column:1/-1}
   .period span{min-width:96px;font-size:15px}
@@ -194,7 +229,7 @@ textarea{min-height:64px;resize:vertical}
 <body>
 <header>
   <div class="top">
-    <h1 class="brand"><img src="logo-small.png" alt="">B&amp;B La Casa Rosa</h1>
+    <h1 class="brand"><img src="logo-small.png" alt="B&amp;B La Casa Rosa"><span>B&amp;B La Casa Rosa</span></h1>
     <div class="period">
       <button class="btn icon" id="prevM" aria-label="Mese precedente">‹</button>
       <span id="periodLbl"></span>
@@ -203,13 +238,18 @@ textarea{min-height:64px;resize:vertical}
     <span id="syncDot" class="sync" hidden></span>
   </div>
   <nav>
-    <button data-tab="pren" class="on">Prenotazioni</button>
-    <button data-tab="calendario">Calendario</button>
-    <button data-tab="ospiti">Ospiti</button>
-    <button data-tab="stat">Statistiche</button>
-    <button data-tab="costi">Costi</button>
-    <button data-tab="imp">Impostazioni</button>
+    <button data-tab="pren" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Prenotazioni</button>
+    <button data-tab="calendario"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</button>
+    <button data-tab="ospiti"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2"/></svg>Ospiti</button>
+    <button data-tab="stat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Statistiche</button>
+    <button data-tab="costi" class="extra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.5 13h-11z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Costi</button>
+    <button data-tab="imp" class="extra"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Impostazioni</button>
+    <button type="button" class="more" id="moreBtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Altro</button>
   </nav>
+  <div class="moremenu" id="moreMenu" hidden>
+    <button type="button" data-go="costi">Costi</button>
+    <button type="button" data-go="imp">Impostazioni</button>
+  </div>
 </header>
 
 <main>
@@ -235,7 +275,7 @@ textarea{min-height:64px;resize:vertical}
 
   <section id="calendario">
     <div class="mcal" id="mcal"></div>
-    <div class="callegend"><span><i style="background:var(--accent)"></i>Camera 5</span><span><i style="background:var(--warn)"></i>Camera 6</span><span>riquadro tratteggiato = camera libera · ↓ arrivi · ↑ partenze</span><span>Tocca una prenotazione per aprirla, o un giorno libero per inserirne una nuova.</span></div>
+    <div class="callegend"><span><i style="background:var(--c5)"></i>Camera 5</span><span><i style="background:var(--c6)"></i>Camera 6</span><span>riquadro tratteggiato = camera libera · ↓ arrivi · ↑ partenze</span><span>Tocca una prenotazione per aprirla, o un giorno libero per inserirne una nuova.</span></div>
   </section>
 
   <section id="ospiti">
@@ -251,15 +291,21 @@ textarea{min-height:64px;resize:vertical}
 
   <section id="stat">
     <div class="kpis" id="kpis"></div>
-    <h2>Per camera</h2>
-    <div class="tw"><table id="tRooms"></table></div>
-    <p class="hint">Fatturato netto = prezzo di vendita meno la commissione Booking.com. Le prenotazioni a cavallo di due mesi sono divise per notte.</p>
-    <h2>Per provenienza</h2>
-    <div class="tw"><table id="tSrc"></table></div>
-    <h2>Riepilogo dell'anno</h2>
-    <div class="tw"><table id="tYear"></table></div>
-    <h2 id="dailyTitle">Ospiti per giorno</h2>
-    <div class="tw"><table id="tDaily"></table></div>
+    <p class="hint" style="margin-top:8px">Fatturato netto = prezzo di vendita meno la commissione Booking.com. Le prenotazioni a cavallo di due mesi sono divise per notte.</p>
+    <details class="statsec"><summary>Per camera</summary>
+      <h3 id="roomsMTitle"></h3><div class="tw"><table id="tRooms"></table></div>
+      <h3>Da inizio anno</h3><div class="tw"><table id="tRoomsY"></table></div>
+    </details>
+    <details class="statsec"><summary>Booking.com e dirette</summary>
+      <div class="tw"><table id="tSrc"></table></div>
+      <p class="hint" id="srcYear"></p>
+    </details>
+    <details class="statsec"><summary id="yearTitle">Riepilogo dell'anno</summary>
+      <div class="tw"><table id="tYear"></table></div>
+    </details>
+    <details class="statsec"><summary id="dailyTitle">Ospiti per giorno</summary>
+      <div class="tw"><table id="tDaily"></table></div>
+    </details>
   </section>
 
   <section id="costi">
@@ -279,17 +325,6 @@ textarea{min-height:64px;resize:vertical}
     <div class="tw"><table id="tCostCat"></table></div>
     <h2 id="costListTitle"></h2>
     <div class="list" id="costList"></div>
-    <h2>Voci di spesa</h2>
-    <form id="lstForm" class="card">
-      <div class="list" id="catRows"></div>
-      <div class="row" style="margin-top:10px">
-        <input id="newCat" placeholder="Nuova voce" style="max-width:220px">
-        <button class="btn" type="button" id="addCat">+ Aggiungi voce</button>
-        <span class="spacer"></span>
-        <button class="btn primary" type="submit">Salva nomi</button>
-      </div>
-      <p class="hint">Se rinomini una voce, anche le spese già registrate prendono il nuovo nome.</p>
-    </form>
   </section>
 
   <section id="imp">
@@ -303,10 +338,21 @@ textarea{min-height:64px;resize:vertical}
         <p class="hint">I nuovi valori valgono per le prenotazioni inserite da ora in poi. Quelle già salvate tengono la commissione e la tariffa di quando sono state inserite.</p></div>
       </form>
     </div>
+    <form id="lstForm" class="card" style="margin-top:12px">
+      <h2>Voci di spesa</h2>
+      <div class="list" id="catRows"></div>
+      <div class="row" style="margin-top:10px">
+        <input id="newCat" placeholder="Nuova voce" style="max-width:220px">
+        <button class="btn" type="button" id="addCat">+ Aggiungi voce</button>
+        <span class="spacer"></span>
+        <button class="btn primary" type="submit">Salva nomi</button>
+      </div>
+      <p class="hint">Sono le voci che compaiono in Costi. Se rinomini una voce, anche le spese già registrate prendono il nuovo nome.</p>
+    </form>
     <div class="card" style="margin-top:12px">
       <h2>Backup dei dati</h2>
       <p class="hint" id="saveInfo"></p>
-      <p class="hint">Se la sincronizzazione non è attiva i dati restano solo su questo telefono o computer, dentro il browser. Fai comunque un backup ogni tanto e conservalo (ad esempio mandalo per email a te stessa): serve anche per spostare i dati su un altro dispositivo.</p>
+      <p class="hint">I dati sono salvati online e si aggiornano da soli su tutti i dispositivi collegati. Scarica comunque un backup una volta al mese e conservalo, per esempio mandandolo per email a te stessa: se qualcosa viene cancellato per sbaglio, è l'unico modo per recuperarlo.</p>
       <div class="row">
         <button class="btn primary" id="expJson">Scarica backup</button>
         <label class="btn" style="flex-direction:row;color:var(--text);font-size:15px">Ripristina backup<input type="file" id="impJson" accept=".json,application/json" hidden></label>
@@ -321,13 +367,6 @@ textarea{min-height:64px;resize:vertical}
       <h2>Sincronizzazione</h2>
       <p class="hint" id="cloudInfo"></p>
       <button class="btn" id="logout">Esci da questo dispositivo</button>
-    </div>
-    <div class="card" style="margin-top:12px">
-      <h2>Prova e azzeramento</h2>
-      <div class="row">
-        <button class="btn" id="demo">Carica dati di esempio</button>
-        <button class="btn danger" id="wipe">Cancella tutti i dati</button>
-      </div>
     </div>
   </section>
 </main>
@@ -349,8 +388,7 @@ textarea{min-height:64px;resize:vertical}
         <input type="hidden" name="guestId">
       </div>
       <div class="full gbanner" id="gBanner" hidden></div>
-      <label>Telefono<input name="phone" type="tel" autocomplete="off"></label>
-      <label>Email<input name="email" type="email" autocomplete="off"></label>
+      <label class="full">Telefono<input name="phone" type="tel" autocomplete="off" inputmode="tel"></label>
       <div class="full seg" id="guestSeg">
         <label><input type="radio" name="guests" value="1">1 ospite</label>
         <label><input type="radio" name="guests" value="2" checked>2 ospiti</label>
@@ -368,13 +406,23 @@ textarea{min-height:64px;resize:vertical}
         <label><input type="radio" name="source" value="booking" checked>Booking.com</label>
         <label><input type="radio" name="source" value="diretta">Diretta</label>
       </div>
-      <label>Ospiti esenti dalla tassa<input type="number" name="exempt" min="0" max="3" step="1" value="0" inputmode="numeric"></label>
-      <label>Motivo esenzione<input name="exemptReason" list="reasons" autocomplete="off" placeholder="se ci sono esenti"></label>
       <div class="full seg">
         <label><input type="radio" name="taxPaid" value="no" checked>Tassa da pagare</label>
         <label><input type="radio" name="taxPaid" value="si">Tassa pagata</label>
       </div>
+      <details class="full more-details" id="bkMore">
+        <summary>Esenzioni dalla tassa</summary>
+        <div class="grid">
+          <label>Ospiti esenti<input type="number" name="exempt" min="0" max="3" step="1" value="0" inputmode="numeric"></label>
+          <label>Motivo<input name="exemptReason" list="reasons" autocomplete="off" placeholder="es. minore"></label>
+        </div>
+      </details>
       <label class="full">Note sulla prenotazione (es. orario di arrivo)<textarea name="notes"></textarea></label>
+      <details class="full more-details" id="bkMail">
+        <summary>Email dell'ospite</summary>
+        <label>Email<input name="email" type="email" autocomplete="off"></label>
+      </details>
+
     </div>
     <datalist id="reasons">
       <option value="Minore di 14 anni"><option value="Residente nel comune"><option value="Autista / accompagnatore turistico">
@@ -556,12 +604,21 @@ $('#prevM').onclick = () => shift(-1);
 $('#nextM').onclick = () => shift(1);
 
 // --- tabs ---
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+document.querySelectorAll('nav button[data-tab]').forEach(b => b.onclick = () => {
   if ($('#search').value) { $('#search').value = ''; renderBookings(); }
-  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('nav button[data-tab]').forEach(x => x.classList.toggle('on', x === b));
   document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  // On phones Costi and Impostazioni live under "Altro"; the arrows only show where the month is used
+  $('#moreBtn').classList.toggle('on', b.classList.contains('extra'));
+  document.body.dataset.tab = b.dataset.tab;
+  closeMore();
   window.scrollTo(0, 0);
 });
+function closeMore() { $('#moreMenu').hidden = true; $('#moreBtn').setAttribute('aria-expanded', 'false'); }
+$('#moreBtn').onclick = e => { e.stopPropagation(); const open = $('#moreMenu').hidden; $('#moreMenu').hidden = !open; $('#moreBtn').setAttribute('aria-expanded', String(open)); };
+$('#moreMenu').onclick = e => { const t = e.target.closest('[data-go]'); if (t) document.querySelector(`nav button[data-tab="${t.dataset.go}"]`).click(); };
+document.addEventListener('click', e => { if (!e.target.closest('#moreMenu')) closeMore(); });
+document.body.dataset.tab = 'pren';
 
 $('#pwShow').onclick = () => { const i = $('#loginForm').password, b = $('#pwShow'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.classList.toggle('on', show); b.setAttribute('aria-label', show ? 'Nascondi la password' : 'Mostra la password'); };
 // A phone often resumes the app instead of restarting it: coming back after a minute away also lands on Prenotazioni, unless a form is open
@@ -633,39 +690,43 @@ function renderStats() {
   const ya = monthStart(Y, 1);
   const m = aggregate(a, z), y = aggregate(ya, z);
   const ydays = z - ya;
-  const cm = costsIn(a, z), cy = costsIn(ya, z);
   const mn = MONTHS[M - 1].toLowerCase();
 
+  // The four numbers that matter at a glance; everything else sits in the sections below
   $('#kpis').innerHTML = [
-    ['Fatturato netto ' + mn, fe(m.tot.net), 'Da inizio anno ' + fe(y.tot.net)],
-    ['Occupazione ' + mn, fp(occ(m.tot, 2, days)), 'Da inizio anno ' + fp(occ(y.tot, 2, ydays))],
+    ['Fatturato netto', fe(m.tot.net), 'Da inizio anno ' + fe(y.tot.net)],
+    ['Occupazione', fp(occ(m.tot, 2, days)), 'Da inizio anno ' + fp(occ(y.tot, 2, ydays))],
     ['Notti occupate', m.tot.nights, `su ${days * 2} disponibili`],
-    ['Presenze (ospiti × notti)', m.tot.pres, 'media ' + fn1(m.tot.pres / days) + ' ospiti al giorno'],
     ['Tassa di soggiorno', fe(m.tot.tax), m.tot.taxDue > 0 ? 'da incassare ' + fe(m.tot.taxDue) : 'tutta incassata'],
-    ['Costi variabili', fe(cm.tot), 'Margine ' + fe(m.tot.net - cm.tot)],
   ].map(([k, v, s]) => `<div class="card kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
 
-  const col = (g, d, rooms) => [g.nights, fp(occ(g, rooms, d)), fe(g.gross), fe(g.comm), fe(g.net), g.pres, fn1(g.pres / d), fe(g.tax)];
-  const labels = ['Notti occupate', 'Occupazione', 'Fatturato lordo', 'Commissioni Booking', '<b>Fatturato netto</b>', 'Presenze', 'Ospiti al giorno (media)', 'Tassa di soggiorno'];
-  const cols = [col(m.rooms['5'], days, 1), col(m.rooms['6'], days, 1), col(m.tot, days, 2), col(y.rooms['5'], ydays, 1), col(y.rooms['6'], ydays, 1), col(y.tot, ydays, 2)];
-  $('#tRooms').innerHTML = `<thead><tr><th></th><th colspan="3" style="text-align:center">${MONTHS[M - 1]} ${Y}</th><th colspan="3" style="text-align:center">Da inizio anno</th></tr>
-    <tr><th></th><th>Cam. 5</th><th>Cam. 6</th><th>Totale</th><th>Cam. 5</th><th>Cam. 6</th><th>Totale</th></tr></thead><tbody>` +
+  // Whole euros in the detail tables so three columns fit a phone; the cards above keep the cents
+  const fe0 = n => Math.round(n).toLocaleString('it-IT') + ' €';
+  const col = (g, d, rooms) => [g.nights, fp(occ(g, rooms, d)), fe0(g.gross), fe0(g.comm), fe0(g.net), g.pres, fn1(g.pres / d), fe0(g.tax)];
+  const labels = ['Notti', 'Occupazione', 'Lordo', 'Comm. Booking', '<b>Netto</b>', 'Presenze', 'Ospiti al giorno', 'Tassa'];
+  // Month and year-to-date as two narrow tables, so each fits a phone screen
+  const roomTable = cols => `<thead><tr><th></th><th>Cam. 5</th><th>Cam. 6</th><th>Totale</th></tr></thead><tbody>` +
     labels.map((l, i) => `<tr><td>${l}</td>${cols.map(c => `<td>${i === 4 ? '<b>' + c[i] + '</b>' : c[i]}</td>`).join('')}</tr>`).join('') + '</tbody>';
+  $('#roomsMTitle').textContent = `${MONTHS[M - 1]} ${Y}`;
+  $('#tRooms').innerHTML = roomTable([col(m.rooms['5'], days, 1), col(m.rooms['6'], days, 1), col(m.tot, days, 2)]);
+  $('#tRoomsY').innerHTML = roomTable([col(y.rooms['5'], ydays, 1), col(y.rooms['6'], ydays, 1), col(y.tot, ydays, 2)]);
 
-  const srow = (lbl, g, h) => [lbl, g.arrivals, g.nights, fe(g.gross), fe(g.comm), fe(g.net), fe(h.net)];
-  $('#tSrc').innerHTML = tableHTML(['', 'Arrivi', 'Notti', 'Lordo', 'Commissioni', 'Netto ' + mn, 'Netto da inizio anno'],
-    [srow('Booking.com', m.src.booking, y.src.booking), srow('Diretta', m.src.diretta, y.src.diretta), srow('Totale', m.tot, y.tot)], 2);
+  const srow = (lbl, g) => [lbl, g.arrivals, fe0(g.gross), fe0(g.comm), fe0(g.net)];
+  $('#tSrc').innerHTML = tableHTML([MONTHS[M - 1], 'Arrivi', 'Lordo', 'Comm.', 'Netto'],
+    [srow('Booking', m.src.booking), srow('Diretta', m.src.diretta), srow('Totale', m.tot)], 2);
+  $('#srcYear').textContent = `Netto da inizio anno: Booking.com ${fe(y.src.booking.net)}, dirette ${fe(y.src.diretta.net)}.`;
 
-  let cum = 0; const rows = []; const T = { n5: 0, n6: 0, nt: 0, ni: 0, pr: 0, tx: 0, co: 0, d: 0 };
+  const rows = []; const T = { nt: 0, ni: 0, tx: 0, co: 0, d: 0 };
   for (let k = 1; k <= 12; k++) {
     const s = monthStart(Y, k), d = dim(Y, k), g = aggregate(s, s + d), c = costsIn(s, s + d).tot;
-    cum += g.tot.net;
-    T.n5 += g.rooms['5'].net; T.n6 += g.rooms['6'].net; T.nt += g.tot.net; T.ni += g.tot.nights; T.pr += g.tot.pres; T.tx += g.tot.tax; T.co += c; T.d += d;
-    rows.push([MSHORT[k - 1], fe(g.rooms['5'].net), fe(g.rooms['6'].net), fe(g.tot.net), fe(cum), fp(occ(g.rooms['5'], 1, d)), fp(occ(g.rooms['6'], 1, d)), fp(occ(g.tot, 2, d)), g.tot.nights, g.tot.pres, fe(g.tot.tax), fe(c), fe(g.tot.net - c)]);
+    T.nt += g.tot.net; T.ni += g.tot.nights; T.tx += g.tot.tax; T.co += c; T.d += d;
+    // Months with no stays and no costs are left out
+    if (g.tot.nights || c) rows.push([MSHORT[k - 1], fe(g.tot.net), fp(occ(g.tot, 2, d)), g.tot.nights, fe(g.tot.tax), fe(c), fe(g.tot.net - c)]);
   }
   const yr = aggregate(monthStart(Y, 1), monthStart(Y + 1, 1));
-  rows.push(['Anno', fe(T.n5), fe(T.n6), fe(T.nt), '', fp(occ(yr.rooms['5'], 1, T.d)), fp(occ(yr.rooms['6'], 1, T.d)), fp(occ(yr.tot, 2, T.d)), T.ni, T.pr, fe(T.tx), fe(T.co), fe(T.nt - T.co)]);
-  $('#tYear').innerHTML = tableHTML([String(Y), 'Netto C5', 'Netto C6', 'Netto tot.', 'Progressivo', 'Occ. C5', 'Occ. C6', 'Occ. tot.', 'Notti', 'Presenze', 'Tassa', 'Costi', 'Margine'], rows, 12);
+  rows.push(['Anno', fe(T.nt), fp(occ(yr.tot, 2, T.d)), T.ni, fe(T.tx), fe(T.co), fe(T.nt - T.co)]);
+  $('#yearTitle').textContent = `Riepilogo del ${Y}`;
+  $('#tYear').innerHTML = tableHTML(['Mese', 'Netto', 'Occup.', 'Notti', 'Tassa', 'Costi', 'Margine'], rows, rows.length - 1);
 
   $('#dailyTitle').textContent = `Ospiti per giorno, ${mn} ${Y}`;
   const drows = [];
@@ -741,6 +802,8 @@ function openBk(b, arrival) {
   F.room.value = v.room; F.name.value = v.name; F.checkin.value = v.checkin; F.checkout.value = v.checkout;
   F.guests.value = v.guests; F.fullPrice.value = v.price; F.source.value = v.source; F.exempt.value = v.exempt || 0;
   F.exemptReason.value = v.exemptReason || ''; F.taxPaid.value = v.taxPaid || 'no'; F.notes.value = v.notes || '';
+  $('#bkMore').open = !!(+v.exempt > 0);
+  $('#bkMail').open = !!(b && guestOf(b)?.email);
   F.checkedIn.value = v.checkedIn ? 'si' : 'no'; $('#ciSeg').style.display = b ? '' : 'none';
   const g0 = b && guestOf(b);
   F.guestId.value = g0?.id || ''; F.phone.value = g0?.phone || ''; F.email.value = g0?.email || '';
@@ -916,10 +979,10 @@ function renderGuests() {
   const rows = db.guests.filter(g => (!q || normName(g.name).includes(q) || (g.phone || '').includes(q)) && (!f || g.rating === f))
     .map(g => { const st = staysOf(g); return { g, st, paid: st.reduce((s, b) => s + (+b.price || 0), 0) }; })
     .sort((a, b) => (b.st[0]?.checkin || '').localeCompare(a.st[0]?.checkin || '') || a.g.name.localeCompare(b.g.name));
-  $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="card gcard ${g.rating}" data-guest="${g.id}">
-    <div class="l1" style="display:flex;gap:8px;flex-wrap:wrap;align-items:baseline"><span class="gn">${esc(g.name)}</span>${g.rating !== 'neutro' ? `<span class="tag ${g.rating}">${RATING[g.rating]}</span>` : ''}</div>
-    <div class="hint">${st.length} soggiorn${st.length === 1 ? 'o' : 'i'}${st[0] ? ` · ultimo ${fd(st[0].checkin)}` : ''} · pagato in tutto ${fe(paid)}${g.phone ? ' · ' + esc(g.phone) : ''}${g.email ? ' · ' + esc(g.email) : ''}</div>
-    ${g.notes ? `<div style="font-size:14px;margin-top:4px;white-space:pre-wrap">${esc(g.notes)}</div>` : ''}
+  $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="grow ${g.rating}" data-guest="${g.id}" title="${esc(RATING[g.rating] || '')}">
+    <span class="dot ${g.rating}"></span>
+    <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}</span>
+    <span class="gmeta">${st.length > 1 ? `<span class="cnt">${st.length} soggiorni</span>` : ''}${st[0] ? fd(st[0].checkin) : ''}<b>${fe(paid)}</b></span>
   </div>`).join('') : '<div class="empty">Nessun ospite trovato.</div>';
 }
 $('#gSearch').oninput = renderGuests;
@@ -964,7 +1027,7 @@ dlg.querySelector('.xclose').onclick = () => dlg.close();
 function renderSettings() {
   const f = $('#setForm');
   if (!dirty.set) { f.commission.value = db.settings.commission; f.taxRate.value = db.settings.taxRate; f.taxMaxNights.value = db.settings.taxMaxNights; }
-  $('#saveInfo').textContent = `${db.bookings.length} prenotazioni e ${db.costs.length} spese salvate su questo dispositivo` + (db.savedAt ? `, ultima modifica ${new Date(db.savedAt).toLocaleString('it-IT')}.` : '.');
+  $('#saveInfo').textContent = `${db.bookings.length} prenotazioni e ${db.costs.length} spese in archivio` + (db.savedAt ? `, ultima modifica ${new Date(db.savedAt).toLocaleString('it-IT')}.` : '.');
 }
 $('#setForm').onsubmit = e => {
   e.preventDefault(); const f = e.target;
@@ -1019,23 +1082,6 @@ $('#expCsvC').onclick = () => {
   [...db.costs].sort((a, b) => a.date.localeCompare(b.date)).forEach(c => rows.push([c.date, c.cat, num(+c.amount), c.note]));
   download(`costi-${today()}.csv`, csv(rows), 'text/csv');
 };
-$('#wipe').onclick = () => { if (confirm('Cancellare TUTTE le prenotazioni e le spese? Scarica prima un backup se ti servono.') && confirm('Sei sicura? L\'operazione non si può annullare.')) { db = blank(); save(); render(); toast('Dati cancellati'); } };
-$('#demo').onclick = () => {
-  if ((db.bookings.length || db.costs.length) && !confirm('Aggiungere dati di esempio a quelli già presenti?')) return;
-  const base = monthStart(Y, M), names = ['Rossi', 'Müller', 'Bianchi', 'Dupont', 'Smith', 'Verdi', 'García', 'Russo'];
-  let d5 = base - 20, d6 = base - 18, i = 0;
-  while (d5 < base + 40) { const n = 1 + (i % 4); db.bookings.push({ id: uid(), room: '5', name: names[i % 8] + ' (esempio)', checkin: n2d(d5), checkout: n2d(d5 + n), guests: 1 + (i % 2), price: 85 * n, source: i % 3 ? 'booking' : 'diretta', exempt: 0, exemptReason: '', taxPaid: d5 < base ? 'si' : 'no', notes: '', commPct: db.settings.commission, taxRate: db.settings.taxRate }); d5 += n + (i % 3); i++; }
-  while (d6 < base + 40) { const n = 2 + (i % 3), g = 1 + (i % 3); db.bookings.push({ id: uid(), room: '6', name: names[i % 8] + ' (esempio)', checkin: n2d(d6), checkout: n2d(d6 + n), guests: g, price: (70 + g * 20) * n, source: i % 2 ? 'booking' : 'diretta', exempt: g === 3 ? 1 : 0, exemptReason: g === 3 ? 'Minore di 14 anni' : '', taxPaid: d6 < base ? 'si' : 'no', notes: 'Arrivo verso le 18', commPct: db.settings.commission, taxRate: db.settings.taxRate }); d6 += n + 1 + (i % 2); i++; }
-  COST_CATS.forEach((c, k) => db.costs.push({ id: uid(), date: n2d(base + (k * 3) % 28), cat: c, amount: [42, 6.5, 9.9, 5.4, 7.2, 8, 11.5, 2.3, 3.1, 60][k], note: 'esempio' }));
-  db.bookings = db.bookings.filter((b, k, all) => !all.some((o, j) => j < k && o.room === b.room && d2n(o.checkin) < d2n(b.checkout) && d2n(o.checkout) > d2n(b.checkin)));
-  linkGuests(db);
-  const bad = db.guests.find(g => g.name === 'Dupont (esempio)');
-  if (bad) Object.assign(bad, { rating: 'cattivo', notes: 'Esempio: ha lasciato la camera sporca e non ha pagato la tassa.' });
-  const good = db.guests.find(g => g.name === 'Rossi (esempio)');
-  if (good) Object.assign(good, { rating: 'buono', phone: '333 1234567', notes: 'Esempio: gentilissimi, preferiscono la camera 5.' });
-  save(); render(); toast('Dati di esempio caricati');
-};
-
 // Forms being edited are not redrawn, so a sync from another device can't wipe what the user is typing
 const dirty = { lst: false, set: false };
 $('#lstForm').addEventListener('input', () => dirty.lst = true);
