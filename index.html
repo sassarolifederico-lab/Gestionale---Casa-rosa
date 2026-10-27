@@ -1115,8 +1115,8 @@ const roomsOf = b => db.bookings.filter(x => x.guestId === b.guestId && x.checki
 function regBoxState(g) {
   const r = g.reg, miss = r ? regMissing(r) : [];
   $('#gRegBox').className = 'full regbox' + (r && !miss.length ? ' ok' : '');
-  $('#gRegState').innerHTML = !r ? '<b>Aggiunta documento</b>Non ancora inserito'
-    : miss.length ? `<b>Aggiunta documento</b>Ne mancano ${miss.length}` : '<b>✓ Documenti completi</b>';
+  $('#gRegState').innerHTML = !r ? '<b>Aggiungi documento</b>Non ancora inserito'
+    : miss.length ? `<b>Aggiungi documento</b>Ne mancano ${miss.length}` : '<b>✓ Documenti completi</b>';
   $('#gRegBtn').textContent = r ? 'Vedi o modifica' : 'Aggiungi documento';
 }
 
