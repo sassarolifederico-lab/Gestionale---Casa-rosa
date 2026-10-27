@@ -577,7 +577,7 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const d2n = s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d) / 864e5; };
 const n2d = n => new Date(n * 864e5).toISOString().slice(0, 10);
 const dim = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate(); // m = 1..12
-const fd = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y.slice(2)}`; };
+const fd = s => { const [y, m, d] = String(s ?? '').split('-'); return esc(`${d}/${m}/${(y || '').slice(2)}`); };
 const today = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
 const monthStart = (y, m) => d2n(`${y}-${String(m).padStart(2, '0')}-01`);
 
@@ -704,12 +704,12 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 function bkCard(b) {
   const c = calc(b);
   const tax = c.tax > 0 ? `<span class="tag ${b.taxPaid === 'si' ? 'ok' : 'due'}">Tassa ${fe(c.tax)} ${b.taxPaid === 'si' ? 'pagata' : 'da pagare'}</span>` : `<span class="tag">Tassa esente</span>`;
-  const ex = +b.exempt > 0 ? ` · ${b.exempt} esent${b.exempt == 1 ? 'e' : 'i'}${b.exemptReason ? ': ' + esc(b.exemptReason) : ''}` : '';
-  return `<div class="card bk" data-id="${b.id}">
-    <div class="l1"><span class="tag r${b.room}">${ROOMS[b.room].name}</span><span class="name">${esc(b.name)}</span>${guestOf(b)?.rating === 'cattivo' ? '<span class="tag cattivo">Cattivo cliente</span>' : guestOf(b)?.rating === 'buono' ? '<span class="tag buono">Buon cliente</span>' : ''}
-      <span class="tag ${b.source}">${b.source === 'booking' ? 'Booking.com' : 'Diretta'}</span></div>
-    <div class="l2">${fd(b.checkin)} → ${fd(b.checkout)} · ${c.n} nott${c.n === 1 ? 'e' : 'i'} · ${b.guests} osp${b.guests == 1 ? 'ite' : 'iti'}</div>
-    <div class="l3">Prezzo ${fe(c.gross)}${+b.discount ? ` (−${b.discount}%)` : ''}${c.comm ? ` · netto ${fe(c.net)}` : ''} · ${tax}${ex}</div>
+  const ex = +b.exempt > 0 ? ` · ${esc(b.exempt)} esent${b.exempt == 1 ? 'e' : 'i'}${b.exemptReason ? ': ' + esc(b.exemptReason) : ''}` : '';
+  return `<div class="card bk" data-id="${esc(b.id)}">
+    <div class="l1"><span class="tag r${esc(b.room)}">${ROOMS[b.room].name}</span><span class="name">${esc(b.name)}</span>${guestOf(b)?.rating === 'cattivo' ? '<span class="tag cattivo">Cattivo cliente</span>' : guestOf(b)?.rating === 'buono' ? '<span class="tag buono">Buon cliente</span>' : ''}
+      <span class="tag ${esc(b.source)}">${b.source === 'booking' ? 'Booking.com' : 'Diretta'}</span></div>
+    <div class="l2">${fd(b.checkin)} → ${fd(b.checkout)} · ${c.n} nott${c.n === 1 ? 'e' : 'i'} · ${esc(b.guests)} osp${b.guests == 1 ? 'ite' : 'iti'}</div>
+    <div class="l3">Prezzo ${fe(c.gross)}${+b.discount ? ` (−${esc(b.discount)}%)` : ''}${c.comm ? ` · netto ${fe(c.net)}` : ''} · ${tax}${ex}</div>
     ${b.notes ? `<div class="note">${esc(b.notes)}</div>` : ''}
   </div>`;
 }
@@ -717,9 +717,9 @@ function bkCard(b) {
 function arrivalCard(b) {
   const c = calc(b), g = guestOf(b);
   const tax = c.tax > 0 && b.taxPaid !== 'si' ? ` · <b>tassa da incassare ${fe(c.tax)}</b>` : '';
-  return `<div class="card bk" data-id="${b.id}">
-    <div class="l1"><span class="tag r${b.room}">${ROOMS[b.room].name}</span><span class="name">${esc(b.name)}</span>${g?.rating === 'cattivo' ? '<span class="tag cattivo">Cattivo cliente</span>' : ''}</div>
-    <div class="l2">${b.guests} osp${b.guests == 1 ? 'ite' : 'iti'} · ${c.n} nott${c.n === 1 ? 'e' : 'i'}, parte il ${fd(b.checkout)}${tax}</div>
+  return `<div class="card bk" data-id="${esc(b.id)}">
+    <div class="l1"><span class="tag r${esc(b.room)}">${ROOMS[b.room].name}</span><span class="name">${esc(b.name)}</span>${g?.rating === 'cattivo' ? '<span class="tag cattivo">Cattivo cliente</span>' : ''}</div>
+    <div class="l2">${esc(b.guests)} osp${b.guests == 1 ? 'ite' : 'iti'} · ${c.n} nott${c.n === 1 ? 'e' : 'i'}, parte il ${fd(b.checkout)}${tax}</div>
     ${b.notes ? `<div class="note">${esc(b.notes)}</div>` : ''}
   </div>`;
 }
@@ -747,7 +747,7 @@ function renderBookings() {
   $('#todayTitle').textContent = `Arrivi di oggi, ${fd(t)}`;
   $('#arrivals').innerHTML = wait.length ? wait.map(arrivalCard).join('')
     : `<div class="empty">${all.length ? 'Tutti gli ospiti di oggi sono arrivati.' : 'Nessun arrivo oggi.'}</div>`;
-  $('#arrivedLine').innerHTML = done.length ? 'Check-in fatto: ' + done.map(b => `<a href="#" class="bk" data-id="${b.id}">${esc(b.name)}</a>`).join(', ') : '';
+  $('#arrivedLine').innerHTML = done.length ? 'Check-in fatto: ' + done.map(b => `<a href="#" class="bk" data-id="${esc(b.id)}">${esc(b.name)}</a>`).join(', ') : '';
 }
 $('#search').oninput = renderBookings;
 document.addEventListener('click', e => { const c = e.target.closest('.bk'); if (c) e.preventDefault(); if (c) openBk(db.bookings.find(b => b.id === c.dataset.id)); });
@@ -803,7 +803,7 @@ function renderStats() {
   const drows = [];
   const wd = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
   for (let d = a; d < z; d++) {
-    const cell = r => { const b = db.bookings.find(b => b.room === r && d2n(b.checkin) <= d && d2n(b.checkout) > d); return b ? `${b.guests} · ${esc(b.name)}` : '<span class="hint">libera</span>'; };
+    const cell = r => { const b = db.bookings.find(b => b.room === r && d2n(b.checkin) <= d && d2n(b.checkout) > d); return b ? `${esc(b.guests)} · ${esc(b.name)}` : '<span class="hint">libera</span>'; };
     const g = ROOM_IDS.reduce((s, r) => s + (+(db.bookings.find(b => b.room === r && d2n(b.checkin) <= d && d2n(b.checkout) > d)?.guests) || 0), 0);
     const ds = n2d(d);
     drows.push([`${wd[new Date(d * 864e5).getUTCDay()]} ${ds.slice(8)}`, cell('5'), cell('6'), g]);
@@ -825,7 +825,7 @@ function renderCosts() {
   db.costs.filter(c => { const d = d2n(c.date); return d >= a && d < z; }).forEach(c => { const k = c.purchaseId || c.id; groups.has(k) ? groups.get(k).push(c) : groups.set(k, [c]); });
   const list = [...groups.values()].sort((x, y) => y[0].date.localeCompare(x[0].date));
   $('#costListTitle').textContent = `Spese di ${MONTHS[M - 1].toLowerCase()} (${list.length})`;
-  $('#costList').innerHTML = list.length ? list.map(g => `<div class="card row"><div><b>${fd(g[0].date)}</b> · ${fe(g.reduce((s, c) => s + (+c.amount || 0), 0))}${g[0].note ? ' · ' + esc(g[0].note) : ''}<div class="hint">${g.map(c => `${esc(c.cat)} ${fe(+c.amount)}`).join(' · ')}</div></div><span class="spacer"></span><button class="btn danger" data-delcost="${g[0].id}">Elimina</button></div>`).join('') : '<div class="empty">Nessuna spesa in questo mese.</div>';
+  $('#costList').innerHTML = list.length ? list.map(g => `<div class="card row"><div><b>${fd(g[0].date)}</b> · ${fe(g.reduce((s, c) => s + (+c.amount || 0), 0))}${g[0].note ? ' · ' + esc(g[0].note) : ''}<div class="hint">${g.map(c => `${esc(c.cat)} ${fe(+c.amount)}`).join(' · ')}</div></div><span class="spacer"></span><button class="btn danger" data-delcost="${esc(g[0].id)}">Elimina</button></div>`).join('') : '<div class="empty">Nessuna spesa in questo mese.</div>';
 }
 const costCats = () => db.listino.costs.map(c => c.cat);
 // Purchase form: one amount box per item; rebuilt only when the item list changes so typing survives syncs
@@ -1037,7 +1037,7 @@ F.name.addEventListener('input', () => {
   if (exact && !F.guestId.value) linkGuest(exact);
   const list = q.length < 2 ? [] : db.guests.filter(g => normName(g.name).includes(q) && g.id !== F.guestId.value)
     .sort((a, b) => (b.rating === 'cattivo') - (a.rating === 'cattivo') || a.name.localeCompare(b.name)).slice(0, 6);
-  $('#gSugg').innerHTML = list.map(g => { const n = staysOf(g).length; return `<button type="button" data-gid="${g.id}"><span class="dot ${g.rating}"></span><span>${esc(g.name)}<br><small>${g.rating === 'cattivo' ? '<b style="color:var(--danger)">Cattivo cliente</b> · ' : g.rating === 'buono' ? 'Buon cliente · ' : ''}${n} soggiorn${n === 1 ? 'o' : 'i'}${g.phone ? ' · ' + esc(g.phone) : ''}</small></span></button>`; }).join('');
+  $('#gSugg').innerHTML = list.map(g => { const n = staysOf(g).length; return `<button type="button" data-gid="${esc(g.id)}"><span class="dot ${esc(g.rating)}"></span><span>${esc(g.name)}<br><small>${g.rating === 'cattivo' ? '<b style="color:var(--danger)">Cattivo cliente</b> · ' : g.rating === 'buono' ? 'Buon cliente · ' : ''}${n} soggiorn${n === 1 ? 'o' : 'i'}${g.phone ? ' · ' + esc(g.phone) : ''}</small></span></button>`; }).join('');
   $('#gSugg').hidden = !list.length;
   guestBanner();
 });
@@ -1050,8 +1050,8 @@ function renderGuests() {
   const rows = db.guests.filter(g => (!q || normName(g.name).includes(q) || (g.phone || '').includes(q)) && (!f || g.rating === f))
     .map(g => { const st = staysOf(g); return { g, st, paid: st.reduce((s, b) => s + (+b.price || 0), 0) }; })
     .sort((a, b) => (b.st[0]?.checkin || '').localeCompare(a.st[0]?.checkin || '') || a.g.name.localeCompare(b.g.name));
-  $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="grow ${g.rating}" data-guest="${g.id}" title="${esc(RATING[g.rating] || '')}">
-    <span class="dot ${g.rating}"></span>
+  $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="grow ${esc(g.rating)}" data-guest="${esc(g.id)}" title="${esc(RATING[g.rating] || '')}">
+    <span class="dot ${esc(g.rating)}"></span>
     <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}${regDone(g) ? '<span class="rtag" title="Documenti completi">Documenti ✓</span>' : ''}</span>
     <span class="gmeta">${st.length > 1 ? `<span class="cnt">${st.length} soggiorni</span>` : ''}${st[0] ? fd(st[0].checkin) : ''}<b>${fe(paid)}</b></span>
   </div>`).join('') : '<div class="empty">Nessun ospite trovato.</div>';
@@ -1066,7 +1066,7 @@ function openGuest(g) {
   GF.name.value = g.name; GF.phone.value = g.phone || ''; GF.email.value = g.email || ''; GF.rating.value = g.rating || 'neutro'; GF.notes.value = g.notes || '';
   const st = staysOf(g);
   $('#tGuestHist').innerHTML = st.length ? tableHTML(['Arrivo', 'Partenza', 'Camera', 'Ospiti', 'Provenienza', 'Pagato'],
-    st.map(b => [fd(b.checkin), fd(b.checkout), b.room, b.guests, b.source === 'booking' ? 'Booking.com' : 'Diretta', fe(+b.price || 0)])) : '<tbody><tr><td class="muted">Nessun soggiorno registrato.</td></tr></tbody>';
+    st.map(b => [fd(b.checkin), fd(b.checkout), esc(b.room), esc(b.guests), b.source === 'booking' ? 'Booking.com' : 'Diretta', fe(+b.price || 0)])) : '<tbody><tr><td class="muted">Nessun soggiorno registrato.</td></tr></tbody>';
   $('#gDel').style.display = st.length ? 'none' : '';
   regBoxState(g);
   gdlg.showModal();
@@ -1146,7 +1146,7 @@ function openReg(g) {
   if (!g.reg) { RF.first.value = parts[0] || ''; RF.last.value = parts.slice(1).join(' '); RF.type.value = 'Ospite singolo'; }
   RF.querySelectorAll('[name=sex]').forEach(i => { i.checked = i.value === r.sex; });
   const st = staysOf(g);
-  RF.stayId.innerHTML = st.length ? st.map(b => `<option value="${b.id}">${fd(b.checkin)} → ${fd(b.checkout)} · ${ROOMS[b.room].name}</option>`).join('') : '<option value="">Nessun soggiorno</option>';
+  RF.stayId.innerHTML = st.length ? st.map(b => `<option value="${esc(b.id)}">${fd(b.checkin)} → ${fd(b.checkout)} · ${ROOMS[b.room].name}</option>`).join('') : '<option value="">Nessun soggiorno</option>';
   RF.stayId.value = st.some(b => b.id === r.stayId) ? r.stayId : (st[0]?.id || '');
   regRefresh();
   rdlg.showModal();
@@ -1276,7 +1276,7 @@ function renderMonthCal() {
       const segEnd = Math.min(d2n(b.checkout), first + n, d + 7 - (new Date(d * 864e5).getUTCDay() + 6) % 7);
       const end = d + 1 === segEnd, len = segEnd - d;
       const label = start ? `<span class="lbl" style="width:calc(${len * 100}% + ${len * 11 - 11}px)">${esc(b.name)}</span>` : '&nbsp;';
-      return `<div class="mbar r${r}${start ? ' s' : ''}${end ? ' e' : ''}${guestOf(b)?.rating === 'cattivo' ? ' bad' : ''}" data-open="${b.id}" title="${esc(b.name)} · ${b.guests} ospiti · ${fd(b.checkin)} → ${fd(b.checkout)}">${label}</div>`;
+      return `<div class="mbar r${r}${start ? ' s' : ''}${end ? ' e' : ''}${guestOf(b)?.rating === 'cattivo' ? ' bad' : ''}" data-open="${esc(b.id)}" title="${esc(b.name)} · ${esc(b.guests)} ospiti · ${fd(b.checkin)} → ${fd(b.checkout)}">${label}</div>`;
     }).join('');
     const out = db.bookings.filter(b => d2n(b.checkout) === d).length, inn = db.bookings.filter(b => d2n(b.checkin) === d).length;
     const flow = [inn ? `↓${inn}` : '', out ? `↑${out}` : ''].filter(Boolean).join(' ');
@@ -1297,7 +1297,7 @@ function render() {
 }
 render();
 
-window.BB = { get db() { return db; }, set db(v) { db = normalize(v); }, cloud, cache, render, toast, blank };
+window.BB = { get db() { return db; }, set db(v) { db = normalize(v); }, cloud, cache, render, toast, blank, wipe() { try { localStorage.removeItem(KEY); } catch (e) {} db = blank(); } };
 if (window.FIREBASE_CONFIG) { const s = document.createElement('script'); s.type = 'module'; s.src = 'cloud.js'; document.body.appendChild(s); }
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});

@@ -2,7 +2,7 @@
 // Caricato da index.html solo quando firebase-config.js contiene la configurazione.
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, onSnapshot, writeBatch, terminate, clearIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const BB = window.BB, $ = s => document.querySelector(s);
 const app = initializeApp(window.FIREBASE_CONFIG);
@@ -133,4 +133,14 @@ $('#forgot').onclick = async () => {
   try { await sendPasswordResetEmail(auth, email); loginError('Ti ho mandato un\'email per scegliere una nuova password.'); }
   catch (err) { loginError(ERR[err.code] || 'Invio non riuscito (' + err.code + ').'); }
 };
-$('#logout').onclick = () => { if (confirm('Uscire da questo dispositivo? I dati restano online.')) signOut(auth); };
+// Logging out also wipes this device's copy (bookings, guests, documents), so whoever uses it next sees nothing
+$('#logout').onclick = async () => {
+  if (!confirm('Uscire da questo dispositivo? I dati restano online, ma da questo dispositivo vengono cancellati.')) return;
+  if ((pending || !navigator.onLine) && !confirm('Ci sono modifiche non ancora inviate online: uscendo adesso andranno perse. Uscire lo stesso?')) return;
+  stop();
+  await signOut(auth).catch(() => {});
+  BB.wipe();
+  await terminate(fs).catch(() => {});
+  await clearIndexedDbPersistence(fs).catch(() => {});
+  location.reload();
+};
