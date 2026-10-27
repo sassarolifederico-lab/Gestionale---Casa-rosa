@@ -197,6 +197,20 @@ textarea{min-height:64px;resize:vertical}
 .tag.buono{background:var(--ok-soft);color:var(--ok)}
 .tag.cattivo{background:var(--danger);color:#fff}
 .rating .r-buono:has(input:checked){background:var(--ok);color:#fff}
+.regbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface2)}
+.regbox .rs{flex:1;min-width:160px;font-size:14px;color:var(--muted)}
+.regbox .rs b{display:block;color:var(--text);font-size:15px}
+.regbox.ok{border-color:var(--ok);background:var(--ok-soft)}
+.regbox.ok .rs b{color:var(--ok)}
+.rtag{display:inline-block;font-size:11px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+#regForm h2{font-size:15px;margin:18px 0 8px;color:var(--accent)}
+#regForm h2:first-of-type{margin-top:4px}
+.radios{display:flex;gap:24px;padding:4px 2px}
+.radios label{flex-direction:row;align-items:center;gap:8px;font-size:16px;color:var(--text);cursor:pointer}
+.radios input{width:22px;height:22px;margin:0;padding:0;accent-color:var(--accent)}
+.ro{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 10px;font-size:16px;color:var(--text);min-height:42px}
+#regForm [hidden]{display:none}
+.regmiss{font-size:13px;color:var(--muted);margin-top:10px}
 .rating .r-neutro:has(input:checked){background:var(--muted);color:var(--surface)}
 .rating .r-cattivo:has(input:checked){background:var(--danger);color:#fff}
 .buyrows{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
@@ -455,6 +469,10 @@ textarea{min-height:64px;resize:vertical}
         <label class="r-cattivo"><input type="radio" name="rating" value="cattivo">Cattivo cliente</label>
       </div>
       <label class="full">Note sull'ospite (si vedono quando prenota di nuovo)<textarea name="notes"></textarea></label>
+      <div class="full regbox" id="gRegBox">
+        <span class="rs" id="gRegState"></span>
+        <button class="btn primary" type="button" id="gRegBtn">Aggiungi dati</button>
+      </div>
     </div>
     <h2>Soggiorni</h2>
     <div class="tw"><table id="tGuestHist"></table></div>
@@ -463,6 +481,59 @@ textarea{min-height:64px;resize:vertical}
       <button class="btn" value="cancel" formnovalidate>Annulla</button>
       <span class="spacer"></span>
       <button class="btn danger" value="delete" id="gDel" formnovalidate>Elimina ospite</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgReg">
+  <form id="regForm" method="dialog">
+    <div class="dlghead">
+      <button class="btn icon xclose" type="button" aria-label="Chiudi">✕</button>
+      <h3>Dati per Ross1000</h3>
+    </div>
+    <p class="hint" style="margin:0">Li vedete solo tu e chi entra nell'app. Puoi salvarli anche a metà e finirli dopo.</p>
+    <h2>Persona</h2>
+    <div class="grid">
+      <div class="full radios" role="radiogroup" aria-label="Sesso">
+        <label><input type="radio" name="sex" value="M">Maschio</label>
+        <label><input type="radio" name="sex" value="F">Femmina</label>
+      </div>
+      <label>Nome<input name="first" autocomplete="off"></label>
+      <label>Cognome<input name="last" autocomplete="off"></label>
+      <label class="full">Tipo alloggiato<select name="type">
+        <option value="">Scegli…</option><option>Ospite singolo</option><option>Capofamiglia</option><option>Capogruppo</option><option>Familiare</option><option>Membro gruppo</option>
+      </select></label>
+      <label>Data di nascita<input type="date" name="birthDate"></label>
+      <label>Cittadinanza<input name="citizenship" list="states" autocomplete="off" placeholder="es. Italia"></label>
+      <label>Stato di nascita<input name="birthState" list="states" autocomplete="off" placeholder="es. Italia"></label>
+      <label data-city="birthState">Comune di nascita<input name="birthCity" autocomplete="off"></label>
+      <label>Stato di residenza<input name="resState" list="states" autocomplete="off" placeholder="es. Italia"></label>
+      <label data-city="resState">Comune di residenza<input name="resCity" autocomplete="off"></label>
+    </div>
+    <div id="regDoc">
+      <h2>Documento</h2>
+      <div class="grid">
+        <label>Tipo di documento<select name="docType">
+          <option value="">Scegli…</option><option>Carta d'identità</option><option>Carta d'identità elettronica</option><option>Passaporto</option><option>Patente di guida</option><option>Altro documento</option>
+        </select></label>
+        <label>Numero di documento<input name="docNum" autocomplete="off" autocapitalize="characters"></label>
+        <label>Stato di rilascio<input name="docState" list="states" autocomplete="off" placeholder="es. Italia"></label>
+        <label data-city="docState">Comune di rilascio<input name="docCity" autocomplete="off"></label>
+      </div>
+    </div>
+    <p class="hint" id="regNoDoc" hidden style="margin-top:12px">Per familiari e membri del gruppo il documento non serve.</p>
+    <h2>Soggiorno</h2>
+    <div class="grid">
+      <label class="full">Quale soggiorno<select name="stayId"></select></label>
+      <label>Data di arrivo<div class="ro" id="regIn"></div></label>
+      <label>Data di partenza<div class="ro" id="regOut"></div></label>
+      <label class="full">Camere occupate<div class="ro" id="regRooms"></div></label>
+    </div>
+    <datalist id="states"></datalist>
+    <div class="regmiss" id="regMiss"></div>
+    <div class="actions">
+      <button class="btn primary" value="save">Salva dati</button>
+      <button class="btn" value="cancel" formnovalidate>Annulla</button>
     </div>
   </form>
 </dialog>
@@ -981,7 +1052,7 @@ function renderGuests() {
     .sort((a, b) => (b.st[0]?.checkin || '').localeCompare(a.st[0]?.checkin || '') || a.g.name.localeCompare(b.g.name));
   $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="grow ${g.rating}" data-guest="${g.id}" title="${esc(RATING[g.rating] || '')}">
     <span class="dot ${g.rating}"></span>
-    <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}</span>
+    <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}${regDone(g) ? '<span class="rtag" title="Dati per Ross1000 completi">Ross1000 ✓</span>' : ''}</span>
     <span class="gmeta">${st.length > 1 ? `<span class="cnt">${st.length} soggiorni</span>` : ''}${st[0] ? fd(st[0].checkin) : ''}<b>${fe(paid)}</b></span>
   </div>`).join('') : '<div class="empty">Nessun ospite trovato.</div>';
 }
@@ -997,6 +1068,7 @@ function openGuest(g) {
   $('#tGuestHist').innerHTML = st.length ? tableHTML(['Arrivo', 'Partenza', 'Camera', 'Ospiti', 'Provenienza', 'Pagato'],
     st.map(b => [fd(b.checkin), fd(b.checkout), b.room, b.guests, b.source === 'booking' ? 'Booking.com' : 'Diretta', fe(+b.price || 0)])) : '<tbody><tr><td class="muted">Nessun soggiorno registrato.</td></tr></tbody>';
   $('#gDel').style.display = st.length ? 'none' : '';
+  regBoxState(g);
   gdlg.showModal();
 }
 document.addEventListener('click', e => { const c = e.target.closest('[data-guest]'); if (c) openGuest(db.guests.find(g => g.id === c.dataset.guest)); });
@@ -1018,6 +1090,82 @@ GF.addEventListener('submit', e => {
   save(); render(); toast('Scheda ospite salvata');
 });
 gdlg.addEventListener('click', e => { if (e.target === gdlg) gdlg.close(); });
+
+// --- data for the Ross1000 registration, kept on the guest card (g.reg) ---
+const STATES = ['Italia', 'Albania', 'Argentina', 'Australia', 'Austria', 'Bangladesh', 'Belgio', 'Bosnia-Erzegovina', 'Brasile', 'Bulgaria', 'Canada', 'Cile', 'Cina', 'Colombia', 'Corea del Sud', 'Croazia', 'Danimarca', 'Egitto', 'Estonia', 'Filippine', 'Finlandia', 'Francia', 'Germania', 'Giappone', 'Grecia', 'India', 'Irlanda', 'Islanda', 'Israele', 'Lettonia', 'Lituania', 'Lussemburgo', 'Malta', 'Marocco', 'Messico', 'Moldavia', 'Norvegia', 'Nuova Zelanda', 'Paesi Bassi', 'Pakistan', 'Perù', 'Polonia', 'Portogallo', 'Regno Unito', 'Repubblica Ceca', 'Romania', 'Russia', 'San Marino', 'Senegal', 'Serbia', 'Slovacchia', 'Slovenia', 'Spagna', "Stati Uniti d'America", 'Sudafrica', 'Svezia', 'Svizzera', 'Tunisia', 'Turchia', 'Ucraina', 'Ungheria', 'Venezuela'];
+$('#states').innerHTML = STATES.map(x => `<option value="${esc(x)}">`).join('');
+const REG_LABELS = { sex: 'sesso', first: 'nome', last: 'cognome', type: 'tipo alloggiato', birthDate: 'data di nascita', citizenship: 'cittadinanza', birthState: 'stato di nascita', birthCity: 'comune di nascita', resState: 'stato di residenza', resCity: 'comune di residenza', docType: 'tipo di documento', docNum: 'numero di documento', docState: 'stato di rilascio', docCity: 'comune di rilascio' };
+const isItaly = v => normName(v || '') === 'italia';
+const needsDoc = r => !['Familiare', 'Membro gruppo'].includes(r.type);
+// The fields still empty; a "comune" is asked only when its state is Italy
+function regMissing(r) {
+  r = r || {};
+  return Object.keys(REG_LABELS).filter(k => {
+    if (k.startsWith('doc') && !needsDoc(r)) return false;
+    if (k === 'birthCity' && !isItaly(r.birthState)) return false;
+    if (k === 'resCity' && !isItaly(r.resState)) return false;
+    if (k === 'docCity' && !isItaly(r.docState)) return false;
+    return !String(r[k] || '').trim();
+  });
+}
+const regDone = g => !!g.reg && !regMissing(g.reg).length;
+// Rooms taken by the same guest for the same dates (two bookings = two rooms)
+const roomsOf = b => db.bookings.filter(x => x.guestId === b.guestId && x.checkin === b.checkin && x.checkout === b.checkout);
+
+function regBoxState(g) {
+  const r = g.reg, miss = r ? regMissing(r) : [];
+  $('#gRegBox').className = 'full regbox' + (r && !miss.length ? ' ok' : '');
+  $('#gRegState').innerHTML = !r ? '<b>Dati per Ross1000</b>Non ancora inseriti'
+    : miss.length ? `<b>Dati per Ross1000</b>Ne mancano ${miss.length}` : '<b>✓ Dati per Ross1000 completi</b>';
+  $('#gRegBtn').textContent = r ? 'Vedi o modifica' : 'Aggiungi dati';
+}
+
+const rdlg = $('#dlgReg'), RF = $('#regForm');
+let rGuest = null;
+function regRefresh() {
+  const r = Object.fromEntries(Object.keys(REG_LABELS).map(k => [k, RF[k].value || '']));
+  r.sex = RF.querySelector('[name=sex]:checked')?.value || '';
+  const doc = needsDoc(r);
+  $('#regDoc').hidden = !doc; $('#regNoDoc').hidden = doc;
+  // A foreign state needs no comune: hide the box so it is not filled by mistake
+  RF.querySelectorAll('[data-city]').forEach(l => { const st = RF[l.dataset.city].value.trim(); l.hidden = !!st && !isItaly(st); });
+  const b = db.bookings.find(x => x.id === RF.stayId.value);
+  $('#regIn').textContent = b ? fd(b.checkin) : '—';
+  $('#regOut').textContent = b ? fd(b.checkout) : '—';
+  $('#regRooms').textContent = b ? (rs => `${rs.length} (${rs.map(x => ROOMS[x.room].name).join(' e ')})`)(roomsOf(b)) : '—';
+  const miss = regMissing(r);
+  $('#regMiss').textContent = miss.length ? 'Mancano ancora: ' + miss.map(k => REG_LABELS[k]).join(', ') + '.' : '✓ Tutti i dati ci sono.';
+  return r;
+}
+function openReg(g) {
+  rGuest = g;
+  const r = g.reg || {}, parts = g.name.trim().split(/\s+/);
+  RF.reset();
+  for (const k of Object.keys(REG_LABELS)) if (k !== 'sex') RF[k].value = r[k] || '';
+  // First time: start from the name on the card (first word = name, the rest = surname)
+  if (!g.reg) { RF.first.value = parts[0] || ''; RF.last.value = parts.slice(1).join(' '); RF.type.value = 'Ospite singolo'; }
+  RF.querySelectorAll('[name=sex]').forEach(i => { i.checked = i.value === r.sex; });
+  const st = staysOf(g);
+  RF.stayId.innerHTML = st.length ? st.map(b => `<option value="${b.id}">${fd(b.checkin)} → ${fd(b.checkout)} · ${ROOMS[b.room].name}</option>`).join('') : '<option value="">Nessun soggiorno</option>';
+  RF.stayId.value = st.some(b => b.id === r.stayId) ? r.stayId : (st[0]?.id || '');
+  regRefresh();
+  rdlg.showModal();
+}
+$('#gRegBtn').onclick = () => openReg(db.guests.find(x => x.id === gEditing.id));
+RF.addEventListener('input', regRefresh);
+RF.addEventListener('change', regRefresh);
+RF.addEventListener('submit', e => {
+  if (e.submitter?.value !== 'save') return;
+  const g = db.guests.find(x => x.id === rGuest.id); if (!g) return;
+  const r = regRefresh();
+  for (const k in r) r[k] = r[k].trim();
+  r.stayId = RF.stayId.value;
+  g.reg = r;
+  save(); render(); regBoxState(g);
+  toast(regMissing(r).length ? 'Dati salvati (alcuni mancano ancora)' : 'Dati per Ross1000 salvati');
+});
+rdlg.addEventListener('click', e => { if (e.target === rdlg) rdlg.close(); });
+rdlg.querySelector('.xclose').onclick = () => rdlg.close();
 gdlg.querySelector('.xclose').onclick = () => gdlg.close();
 // Tapping the dark area outside the window closes it too
 dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
