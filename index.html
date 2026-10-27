@@ -471,7 +471,7 @@ textarea{min-height:64px;resize:vertical}
       <label class="full">Note sull'ospite (si vedono quando prenota di nuovo)<textarea name="notes"></textarea></label>
       <div class="full regbox" id="gRegBox">
         <span class="rs" id="gRegState"></span>
-        <button class="btn primary" type="button" id="gRegBtn">Aggiungi dati</button>
+        <button class="btn primary" type="button" id="gRegBtn">Aggiungi documento</button>
       </div>
     </div>
     <h2>Soggiorni</h2>
@@ -489,7 +489,7 @@ textarea{min-height:64px;resize:vertical}
   <form id="regForm" method="dialog">
     <div class="dlghead">
       <button class="btn icon xclose" type="button" aria-label="Chiudi">✕</button>
-      <h3>Dati per Ross1000</h3>
+      <h3>Aggiungi documento</h3>
     </div>
     <p class="hint" style="margin:0">Li vedete solo tu e chi entra nell'app. Puoi salvarli anche a metà e finirli dopo.</p>
     <h2>Persona</h2>
@@ -1052,7 +1052,7 @@ function renderGuests() {
     .sort((a, b) => (b.st[0]?.checkin || '').localeCompare(a.st[0]?.checkin || '') || a.g.name.localeCompare(b.g.name));
   $('#guestList').innerHTML = rows.length ? rows.map(({ g, st, paid }) => `<div class="grow ${g.rating}" data-guest="${g.id}" title="${esc(RATING[g.rating] || '')}">
     <span class="dot ${g.rating}"></span>
-    <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}${regDone(g) ? '<span class="rtag" title="Dati per Ross1000 completi">Ross1000 ✓</span>' : ''}</span>
+    <span class="gn">${esc(g.name)}${g.notes ? ' <small title="Ha delle note">✎</small>' : ''}${regDone(g) ? '<span class="rtag" title="Documenti completi">Documenti ✓</span>' : ''}</span>
     <span class="gmeta">${st.length > 1 ? `<span class="cnt">${st.length} soggiorni</span>` : ''}${st[0] ? fd(st[0].checkin) : ''}<b>${fe(paid)}</b></span>
   </div>`).join('') : '<div class="empty">Nessun ospite trovato.</div>';
 }
@@ -1115,9 +1115,9 @@ const roomsOf = b => db.bookings.filter(x => x.guestId === b.guestId && x.checki
 function regBoxState(g) {
   const r = g.reg, miss = r ? regMissing(r) : [];
   $('#gRegBox').className = 'full regbox' + (r && !miss.length ? ' ok' : '');
-  $('#gRegState').innerHTML = !r ? '<b>Dati per Ross1000</b>Non ancora inseriti'
-    : miss.length ? `<b>Dati per Ross1000</b>Ne mancano ${miss.length}` : '<b>✓ Dati per Ross1000 completi</b>';
-  $('#gRegBtn').textContent = r ? 'Vedi o modifica' : 'Aggiungi dati';
+  $('#gRegState').innerHTML = !r ? '<b>Documenti</b>Non ancora inseriti'
+    : miss.length ? `<b>Documenti</b>Ne mancano ${miss.length}` : '<b>✓ Documenti completi</b>';
+  $('#gRegBtn').textContent = r ? 'Vedi o modifica' : 'Aggiungi documento';
 }
 
 const rdlg = $('#dlgReg'), RF = $('#regForm');
@@ -1162,7 +1162,7 @@ RF.addEventListener('submit', e => {
   r.stayId = RF.stayId.value;
   g.reg = r;
   save(); render(); regBoxState(g);
-  toast(regMissing(r).length ? 'Dati salvati (alcuni mancano ancora)' : 'Dati per Ross1000 salvati');
+  toast(regMissing(r).length ? 'Dati salvati (alcuni mancano ancora)' : 'Documenti salvati');
 });
 rdlg.addEventListener('click', e => { if (e.target === rdlg) rdlg.close(); });
 rdlg.querySelector('.xclose').onclick = () => rdlg.close();
